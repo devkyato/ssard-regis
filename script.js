@@ -19,7 +19,7 @@ const clearButton = document.getElementById("clear");
 
 const form = document.getElementById("registrationForm");
 const messageDiv = document.getElementById("message");
-const qrCodeDisplay = document.getElementByClass("storedQR");
+const qrCodeDisplay = document.getElementById("storedQR");
 
 const alreadyRegisteredSection = document.getElementById("alreadyRegisteredSection");
 const registeredNameSpan = document.getElementById("registeredName");
