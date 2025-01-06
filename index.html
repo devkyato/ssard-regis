@@ -20,9 +20,9 @@
   </div>
 
   <!-- Main Container -->
-  <div class="container">
+  <div class="container fade-init" id="mainContainer">
     <!-- Header & Title -->
-    <header class="header">
+    <header class="header fade-init" id="header">
       <div class="header-logo">
         <img
           src="https://ramconnect.apc.edu.ph/logo/nu-apc-cons-logo.png"
@@ -33,7 +33,10 @@
     </header>
 
     <!-- Already Registered Display -->
-    <div id="alreadyRegisteredSection" class="already-registered hidden">
+    <div 
+      id="alreadyRegisteredSection"
+      class="already-registered fade-init hidden-start"
+    >
       <h2>Welcome Back, <span id="registeredName"></span>!</h2>
       <p>You have already registered.</p>
       <div class="qr-preview">
@@ -46,7 +49,10 @@
     </div>
 
     <!-- Registration Form -->
-    <div id="formSection" class="form-section hidden">
+    <div
+      id="formSection"
+      class="form-section fade-init hidden-start"
+    >
       <form id="registrationForm">
         <div class="form-grid">
           <!-- Left Column -->
@@ -148,7 +154,7 @@
   </div>
 
   <!-- Footer -->
-  <footer class="footer">
+  <footer class="footer fade-init hidden-start" id="footer">
     <p>&copy; Asia Pacific College, 2025. All rights reserved.</p>
     <div class="social-links">
       <a href="https://twitter.com/apc" target="_blank">Twitter</a>
