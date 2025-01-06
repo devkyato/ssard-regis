@@ -1,12 +1,13 @@
-/* styles.css */
-
+/* =========================
+   Reset and Base Styles
+========================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* FONT + BODY */
+/* Font and Body */
 body {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #091236, #1E215D);
@@ -16,7 +17,7 @@ body {
   flex-direction: column;
 }
 
-/* FADE/TRANSITION CLASSES */
+/* Fade-in and Hidden Classes */
 .fade-init {
   opacity: 0;
   transform: translateY(20px);
@@ -26,14 +27,11 @@ body {
   opacity: 1;
   transform: translateY(0);
 }
-
-/* To fully hide elements that are "hidden" initially */
 .hidden-start {
-  /* This class can be used to keep them out of the flow or just hidden until JS toggles show */
-  position: relative; /* keep normal flow; hidden by opacity anyway */
+  display: none;
 }
 
-/* LOADING OVERLAY */
+/* Loading Overlay */
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -51,30 +49,80 @@ body {
   opacity: 0;
   transition: visibility 0s, opacity 0.3s ease;
 }
-
 .loading-overlay.active {
   visibility: visible;
   opacity: 1;
 }
-
 .loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 6px solid rgba(255,255,255,0.3);
-  border-top: 6px solid #fff;
+  width: 60px;
+  height: 60px;
+  border: 8px solid rgba(255,255,255,0.3);
+  border-top: 8px solid #fff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 15px;
 }
-
 @keyframes spin {
   100% { transform: rotate(360deg); }
 }
 
-/* CONTAINER */
+/* Consent Modal */
+.consent-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.5s ease;
+}
+.consent-content {
+  background-color: #fff;
+  padding: 40px 30px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  animation: slideIn 0.5s ease;
+}
+.consent-content h2 {
+  margin-bottom: 20px;
+  font-size: 26px;
+  color: #333;
+}
+.consent-content p {
+  margin-bottom: 30px;
+  font-size: 16px;
+  color: #555;
+  line-height: 1.5;
+}
+.consent-btn {
+  padding: 12px 25px;
+  background-color: #6c63ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.consent-btn:hover {
+  background-color: #574b90;
+  transform: scale(1.05);
+}
+
+/* Container */
 .container {
   flex: 1;
-  max-width: 1200px;
+  max-width: 900px;
   width: 95%;
   background: #fff;
   margin: 40px auto;
@@ -84,222 +132,338 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  animation: fadeInContainer 0.6s ease;
 }
 
-/* HEADER */
+/* Header */
 .header {
   background: #151539;
   color: #fff;
-  padding: 20px;
+  padding: 30px 20px;
   text-align: center;
   position: relative;
+  transition: background-color 0.3s;
 }
-
 .header-logo img {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   vertical-align: middle;
   margin-right: 10px;
 }
-
 .header h1 {
   font-weight: 600;
   margin-top: 10px;
-  font-size: 24px;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slot-counter {
+  margin-top: 15px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slot-counter i {
+  margin-right: 8px;
+  color: #FFD700;
+  animation: bounce 2s infinite;
 }
 
-/* FORM + ALREADY REGISTERED SECTION */
+/* Form and Already Registered Sections */
 .form-section,
 .already-registered {
-  padding: 20px 30px;
+  padding: 25px 35px;
   flex: 1;
+  animation: fadeInSection 0.6s ease;
 }
 
-/* ALREADY REGISTERED */
+/* Already Registered */
 .already-registered h2 {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
+.already-registered p {
+  font-size: 16px;
+  margin-bottom: 25px;
+  text-align: center;
+}
 .qr-preview {
-  margin-top: 20px;
+  margin-top: 25px;
 }
-
+.qr-preview h3 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+.qr-preview i {
+  margin-right: 8px;
+  color: #6c63ff;
+}
 .reupload-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
+  margin-top: 25px;
+  padding: 12px 25px;
   background: #ff4b5c;
   color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 .reupload-btn:hover {
   background: #e04350;
+  transform: scale(1.05);
 }
 
-/* FORM */
+/* Registration Form */
 #registrationForm {
-  margin-top: 10px;
+  margin-top: 15px;
 }
-
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 25px;
 }
-
-#registrationForm label {
+.form-grid label {
   font-weight: 500;
   margin-bottom: 5px;
   display: block;
   color: #444;
-  margin-top: 15px;
+  margin-top: 20px;
+  font-size: 16px;
 }
-
-#registrationForm input[type="text"],
-#registrationForm input[type="email"],
-#registrationForm input[type="file"] {
+.form-grid input[type="text"],
+.form-grid input[type="email"],
+.form-grid input[type="file"] {
   width: 100%;
-  padding: 10px;
+  padding: 12px 15px;
   border: 1.5px solid #ccc;
   border-radius: 6px;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
   outline: none;
+  font-size: 16px;
 }
-
-#registrationForm input[type="text"]:focus,
-#registrationForm input[type="email"]:focus,
-#registrationForm input[type="file"]:focus {
+.form-grid input[type="text"]:focus,
+.form-grid input[type="email"]:focus,
+.form-grid input[type="file"]:focus {
   border-color: #6c63ff;
+  box-shadow: 0 0 8px rgba(108, 99, 255, 0.5);
 }
 
-/* SIGNATURE */
+/* Signature Options */
 .signature-options {
-  margin-top: 15px;
-  margin-bottom: 5px;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
-
-.signature-options .radio-group {
+.signature-options label {
+  display: block;
+  font-size: 16px;
+}
+.radio-group {
   display: flex;
-  gap: 10px;
+  gap: 25px;
   align-items: center;
-}
-
-.upload-section,
-.draw-section {
   margin-top: 10px;
 }
+.radio-group input[type="radio"] {
+  margin-right: 8px;
+}
+.radio-group label {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+.radio-group label i {
+  margin-right: 6px;
+  color: #6c63ff;
+}
 
+/* Upload and Draw Sections */
+.upload-section,
+.draw-section {
+  margin-top: 15px;
+  transition: all 0.3s ease;
+}
 #signature-pad {
   border: 1.5px dashed #ccc;
   width: 100%;
   border-radius: 6px;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
-
-/* Clear Signature Button */
+#signature-pad:focus-within {
+  border-color: #6c63ff;
+  box-shadow: 0 0 8px rgba(108, 99, 255, 0.5);
+}
 #clear {
-  margin-top: 10px;
-  padding: 8px 12px;
+  margin-top: 15px;
+  padding: 10px 20px;
   background-color: #ff4b5c;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
 }
-
 #clear:hover {
   background-color: #e04350;
+  transform: scale(1.05);
+}
+#clear i {
+  margin-right: 5px;
 }
 
-/* REGISTER BUTTON */
+/* Register Button */
 .register-btn {
-  margin-top: 30px;
-  padding: 12px;
+  margin-top: 35px;
+  padding: 14px 0;
   background-color: #6c63ff;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 20px;
   width: 100%;
   cursor: pointer;
-  transition: background-color 0.3s;
-  grid-column: span 2; /* span both columns in grid */
+  transition: background-color 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
+.register-btn i {
+  margin-right: 10px;
+}
 .register-btn:hover {
   background-color: #574b90;
+  transform: scale(1.02);
 }
 
-/* QR DISPLAY */
+/* QR Display */
 .qr-display {
   width: 256px;
   height: 256px;
   margin: 0 auto;
   position: relative;
-  border: 1px solid #eee;
+  border: 2px solid #eee;
   background: #fff;
   border-radius: 8px;
-  margin-top: 10px;
+  margin-top: 15px;
+  transition: transform 0.3s ease;
+}
+.qr-display img {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+.qr-display img:hover {
+  transform: scale(1.05);
 }
 
-/* MESSAGE */
+/* Message */
 .message {
-  margin-top: 20px;
+  margin-top: 25px;
   text-align: center;
   font-weight: 500;
+  font-size: 16px;
+  transition: opacity 0.3s ease;
 }
 
-/* FOOTER */
+/* Footer */
 .footer {
   background-color: #f4f4f4;
-  padding: 20px;
+  padding: 25px 20px;
   text-align: center;
+  transition: background-color 0.3s;
 }
-
 .footer p {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   font-size: 14px;
   color: #333;
 }
-
 .social-links {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 25px;
 }
-
 .social-links a {
   text-decoration: none;
   color: #555;
-  font-size: 14px;
-  transition: color 0.2s;
+  font-size: 20px;
+  transition: color 0.3s, transform 0.2s;
 }
-
 .social-links a:hover {
   color: #111;
+  transform: scale(1.1);
 }
 
-/* MEDIA QUERIES */
+/* Slot Counter Animation */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Fade-in Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeInContainer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeInSection {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive Design */
 @media (max-width: 850px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
+  .qr-display {
+    width: 200px;
+    height: 200px;
+  }
 }
-
 @media (max-width: 480px) {
   .header h1 {
-    font-size: 20px;
+    font-size: 22px;
   }
   .reupload-btn {
     width: 100%;
+    font-size: 16px;
   }
   .footer p {
     font-size: 13px;
   }
   .social-links a {
-    font-size: 13px;
+    font-size: 18px;
+  }
+  .register-btn {
+    font-size: 18px;
+  }
+  .message {
+    font-size: 14px;
+  }
+  .signature-options label {
+    font-size: 14px;
+  }
+  .radio-group label {
+    font-size: 14px;
   }
 }
