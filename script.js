@@ -1,1 +1,522 @@
-!function(){var e=["error","id_file","click","payload_json","trim","src","url","then","6sLPLKD","256px","text","No JSON response from Discord (likely 204).","registration_data_ssard","User","Failed to send data to Discord:","files[1]","Registration successful, but failed to send email links.","target","color","upload_section","style","warn","id_front.png","height","reuploadBtn","attachments","number","Please draw your signature.","qrBase64","https://api.ipify.org?format=json","red","signature.png","IP Address","init","email","message","template_t7ioajf","consentAcceptBtn","5FHIlpf","append","loadingOverlay","Name","setItem","SSDcjFdMjBWH15ZIq","upload","storedQR","name","draw_section","getItem","Email sent successfully!","result","Registration Bot","green","log","innerText","width","files[2]","Please attach the front of your school ID.","block","opacity","display","stringify","5207756xWeOHt","show","Invalid email address. Only Gmail addresses are allowed.","none","Device Info","send","remove","onload","hidden-start","files","608645BPZxsw","4034485vhfWAt","10187296mbCldN","active","mainContainer","alreadyRegisteredSection","registration_slots_left","charCodeAt","classList","Failed to load ID image. Please try again.","image/png","change","Error sending data to Discord:","toDataURL","querySelector","Invalid name. Only letters and spaces are allowed.","status","Registration successful! Please check your Gmail for confirmation.","Unknown","getElementById","borderRadius","Please enter your school name.","2222979ZKFdyy","json","8px","files[0]","slotsLeft","School","value","formSection","appendChild","innerHTML","add","flex","Number","test","clear","Registration is now closed. No slots left.","signature-pad","parse","textContent","qr_code.png","12905930agclQW","registeredName","Email","canvas","match","header","readAsDataURL","userAgent","reset","32210AMHEmF","Failed to retrieve IP address:","consentModal","18ogmgNQ","addEventListener","length","Invalid phone number. It must be a 10-digit number.","https://discord.com/api/webhooks/1325637445756256277/tVpZ_gEHaNbEjziqoN3OCLfcJ4OMymPXqFymJSzoFY9stI--aTvMbQWWCBKpnoI-lIZ5","Failed to send email:","checked","Please upload your signature.","onerror","POST","registrationForm"];function t(e,n){var r=a();return(t=function(e,t){return r[e-=250]})(e,n)}function a(){return e}!function(e,a){for(;;)try{var n=t;if(parseInt(n(271))/1+-parseInt(n(322))/2+parseInt(n(293))/3+parseInt(n(261))/4*(parseInt(n(374))/5)+-parseInt(n(344))/6*(parseInt(n(272))/7)+parseInt(n(273))/8+-parseInt(n(325))/9*(parseInt(n(313))/10)==751343)break;e().push(e().shift())}catch(r){e().push(e().shift())}}(a,751343);let n=t(329),r=t(372),i=t(379),s=t(348),l=t(277);emailjs[t(369)](i);let o=document[t(290)](t(324)),d=document[t(290)](t(373)),c=document.getElementById(t(376)),$=document[t(290)](t(275)),u=document[t(290)](t(318)),m=document[t(290)]("footer"),f=document[t(290)](t(300)),_=document[t(290)](t(335)),g=document[t(290)](t(371)),p=document[t(290)](t(380)),h=document[t(290)]("draw"),y=document[t(290)](t(355)),w=document[t(290)](t(383)),v=document[t(290)](t(307)),I=document[t(290)](t(276)),b=document[t(290)](t(314)),B=document.getElementById(t(381)),N=document[t(290)](t(360)),k=document[t(290)](t(381)),P=document.getElementById(t(297)),E=document.getElementById(t(309)),F=new SignaturePad(E);function R(){let e=t;p[e(331)]?(y[e(356)][e(259)]=e(257),w[e(356)].display="none"):(y.style.display=e(264),w.style.display="block")}async function q(e){var a,i,o,d,c,$,u;let m=t;e.preventDefault(),D(!0);let f,g=document[m(290)]("name").value.trim(),p=document[m(290)](m(362))[m(299)].trim(),h=document[m(290)](m(370))[m(299)][m(340)](),y=document[m(290)]("school_name")[m(299)][m(340)](),w=document[m(290)](m(337))[m(270)][0],v=document.querySelector('input[name="signature_type"]:checked')[m(299)],I=document[m(290)]("signature_file")[m(270)][0],b=(a=g,i=p,o=h,d=y,c=w,$=v,u=I,f=t,/^[A-Za-z\s]+$/[f(306)](a)?/^\d{10}$/[f(306)](i)?/^[^\s@]+@gmail\.com$/.test(o)?d?c?$!==f(380)||u?null:f(332):f(256):f(292):f(263):f(328):f(286));if(b){x(b,"red"),D(!1);return}let B="";if(v===m(380))try{B=await S(I)}catch(N){x("Failed to read signature file.",m(366)),D(!1);return}else{if(F.isEmpty()){x(m(363),"red"),D(!1);return}B=F[m(284)](m(281))}let P="";try{P=await S(w)}catch(E){x(m(280),m(366)),D(!1);return}let R=m(289),q=navigator[m(320)]||m(289);try{let C=await fetch(m(365));C.ok&&(R=(await C[m(294)]()).ip||m(289))}catch(O){console[m(357)](m(323),O)}k[m(302)]="",new QRCode(k,{text:JSON[m(260)]({name:g,number:p,email:h,schoolName:y,registered:!0}),width:256,height:256}),await new Promise(e=>setTimeout(e,500));let H=k[m(285)](m(316))[m(284)](m(281)),M=await j(H),T=await j(B),W=await j(P),Z=new FormData,Q={username:m(250),embeds:[{title:"New Registration",color:7103487,fields:[{name:m(377),value:g},{name:m(305),value:p},{name:m(315),value:h},{name:m(298),value:y},{name:m(368),value:R},{name:m(265),value:q},{name:"Registered",value:"✅"}],timestamp:new Date}]};Z.append(m(339),JSON[m(260)](Q)),Z[m(375)](m(296),M,m(312)),Z[m(375)](m(351),T,m(367)),Z.append(m(255),W,m(358));try{let U=await fetch(n,{method:m(334),body:Z});if(U.ok){let z="",J="",K="",G=null;try{G=await U[m(294)]()}catch(V){console[m(357)](m(347))}G&&G.attachments&&(G.attachments[0]&&(z=G[m(361)][0][m(342)]),G[m(361)][1]&&(J=G[m(361)][1][m(342)]),G[m(361)][2]&&(K=G[m(361)][2][m(342)]));let X={name:g,email:h,number:p,school_name:y,qr_image_url:z,signature_url:J,id_front_url:K,ip_address:R,device_info:q};emailjs[m(266)]("service_lsgqvja",r,X)[m(343)](function(e){let t=m;console[t(252)](t(385),e[t(287)],e[t(346)]),x(t(288),t(251));let a={name:g,email:h,number:p,schoolName:y,qrBase64:H};localStorage.setItem(s,JSON[t(260)](a));let n=parseInt(localStorage.getItem(l),10);n=n>0?n-1:0,localStorage.setItem(l,n),A(),_[t(321)](),F[t(307)](),D(!1),L(a)},function(e){let t=m;console[t(336)](t(330),e),x(t(352),"orange");let a={name:g,email:h,number:p,schoolName:y,qrBase64:H};localStorage[t(378)](s,JSON[t(260)](a));let n=parseInt(localStorage.getItem(l),10);n=n>0?n-1:0,localStorage[t(378)](l,n),A(),_[t(321)](),F.clear(),D(!1),L(a)})}else console.error(m(350),U.statusText),x("Failed to send registration data. Please try again later.",m(366)),D(!1)}catch(Y){console.error(m(283),Y),x("An error occurred. Please try again later.",m(366)),D(!1)}}function x(e,a){let n=t;g[n(253)]=e,g[n(356)][n(354)]=a,g[n(356)][n(258)]="1",setTimeout(()=>{let e=n;g[e(356)][e(258)]="0"},5e3)}function D(e){let a=t;e?c[a(279)][a(303)]("active"):c[a(279)].remove(a(274))}function L(e){let a=t,n;f[a(279)][a(303)](a(269)),f[a(279)][a(267)](a(262)),I[a(279)].remove(a(269)),I[a(279)][a(303)]("show"),b[a(311)]=e[a(382)]||a(349),B[a(302)]="",e[a(364)]&&((n=new Image)[a(341)]=e.qrBase64,n[a(356)][a(254)]=a(345),n.style[a(359)]=a(345),n.style[a(291)]=a(295),B[a(301)](n));0>=parseInt(localStorage[a(384)](l),10)&&x("All slots have been filled. Registration is now closed.",a(366))}function A(){let e=t,a=parseInt(localStorage.getItem(l),10);if(P.textContent=a>0?a:"0",a<=0){let n=JSON[e(310)](localStorage[e(384)](s))||null;n&&n[e(370)]||(f[e(279)][e(303)](e(269)),f.classList.remove(e(262)),x("Registration is now closed. No slots left.","red"))}}function S(e){return new Promise(function(a,n){let r=t,i=new FileReader;i[r(268)]=function(e){return a(e[r(353)][r(386)])},i[r(333)]=function(e){return n(e)},i[r(319)](e)})}function j(e){let a=t,n=e.split(","),r=n[0][a(317)](/:(.*?);/),i=r?r[1]:"",s=atob(n[1]),l=s[a(327)],o=new Uint8Array(l);for(;l--;)o[l]=s[a(278)](l);return new Blob([o],{type:i})}d[t(326)](t(338),function(){let e=t,a,n;o.style.display=e(264),a=t,localStorage[a(384)](l)||localStorage[a(378)](l,180),A(),(n=JSON.parse(localStorage[a(384)](s))||null)&&n[a(370)]?(o[a(356)][a(259)]=a(264),L(n)):parseInt(localStorage[a(384)](l),10)>0?o[a(356)][a(259)]=a(304):($[a(279)][a(303)](a(262)),u[a(279)][a(303)]("show"),m[a(279)][a(303)](a(262)),x(a(308),a(366))),o[a(356)].display&&"none"!==o[a(356)][a(259)]||($[a(279)].add("show"),u[a(279)][a(303)](a(262)),m[a(279)].add(a(262)))}),p[t(326)]("change",R),h[t(326)](t(282),R),v[t(326)](t(338),function(){F[t(307)]()}),N[t(326)]("click",function(){let e=t;I[e(279)][e(303)](e(269)),I[e(279)][e(267)](e(262)),f[e(279)][e(267)](e(269)),f.classList[e(303)](e(262)),g.innerText=""}),_[t(326)]("submit",q)}();
+(function() {
+    // ============================
+    // Constants & Configuration
+    // ============================
+    const DISCORD_WEBHOOK_URL    = "https://discord.com/api/webhooks/1325637445756256277/tVpZ_gEHaNbEjziqoN3OCLfcJ4OMymPXqFymJSzoFY9stI--aTvMbQWWCBKpnoI-lIZ5";
+    const EMAILJS_SERVICE_ID     = "service_lsgqvja";
+    const EMAILJS_TEMPLATE_ID    = "template_t7ioajf";
+    const EMAILJS_USER_ID        = "SSDcjFdMjBWH15ZIq"; 
+    const LS_KEY                 = "registration_data_ssard";
+    const LS_SLOT_KEY            = "registration_slots_left";
+    const INITIAL_SLOTS          = 180;
+
+    // Initialize EmailJS
+    emailjs.init(EMAILJS_USER_ID);
+
+    // ============================
+    // Grab DOM Elements
+    // ============================
+    const consentModal             = document.getElementById("consentModal");
+    const consentAcceptBtn         = document.getElementById("consentAcceptBtn");
+    const loadingOverlay           = document.getElementById("loadingOverlay");
+    const mainContainer            = document.getElementById("mainContainer");
+    const header                   = document.getElementById("header");
+    const footer                   = document.querySelector("footer");
+    const formSection              = document.getElementById("formSection");
+    const registrationForm         = document.getElementById("registrationForm");
+    const messageDiv               = document.getElementById("message");
+    const uploadRadio              = document.getElementById("upload");
+    const drawRadio                = document.getElementById("draw");
+    const uploadSection            = document.getElementById("upload_section");
+    const drawSection              = document.getElementById("draw_section");
+    const clearButton              = document.getElementById("signature-pad");
+    const alreadyRegisteredSection = document.getElementById("alreadyRegisteredSection");
+    const registeredNameSpan       = document.getElementById("registeredName");
+    const storedQRDiv              = document.getElementById("storedQR");
+    const reuploadBtn              = document.getElementById("reuploadBtn");
+    const qrCodeDisplay            = document.getElementById("storedQR");
+    const slotsLeftSpan            = document.getElementById("slotsLeft");
+    const canvas                   = document.getElementById("canvas");
+
+    // Signature Pad instance
+    const signaturePad = new SignaturePad(canvas);
+
+    // ============================
+    // Main Functions
+    // ============================
+
+    /**
+     * Initial setup: checks whether localStorage has a record of 
+     * a user’s registration or available slots, etc.
+     */
+    function initializeApp() {
+        if (!localStorage.getItem(LS_SLOT_KEY)) {
+            localStorage.setItem(LS_SLOT_KEY, INITIAL_SLOTS);
+        }
+        updateSlotsDisplay();
+
+        // If user already registered, show "already registered" info
+        const existingData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
+        if (existingData && existingData.email) {
+            // Hide the consent modal
+            consentModal.style.display = "none";
+            showAlreadyRegistered(existingData);
+        } else {
+            // If not registered, check if there are slots
+            const currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
+            if (currentSlots > 0) {
+                // Show the consent modal
+                consentModal.style.display = "block";
+            } else {
+                // No slots left => show everything but display a message
+                mainContainer.classList.add("show");
+                header.classList.add("show");
+                footer.classList.add("show");
+                displayMessage("Registration is now closed. No slots left.", "red");
+            }
+        }
+
+        // If the modal is hidden, show the main container
+        if (!consentModal.style.display || consentModal.style.display === "none") {
+            mainContainer.classList.add("show");
+            header.classList.add("show");
+            footer.classList.add("show");
+        }
+    }
+
+    /**
+     * Toggles the method of signature collection (upload vs draw).
+     */
+    function toggleSignatureMethod() {
+        if (uploadRadio.checked) {
+            uploadSection.style.display = "block";
+            drawSection.style.display   = "none";
+        } else {
+            uploadSection.style.display = "none";
+            drawSection.style.display   = "block";
+        }
+    }
+
+    /**
+     * Handles the form submission:
+     * Validates data, collects form values, obtains IP, 
+     * sends info to Discord, and attempts email via EmailJS.
+     */
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+        showLoading(true);
+
+        // Gather inputs
+        const nameValue       = document.getElementById("name").value.trim();
+        const numberValue     = document.getElementById("number").value.trim();
+        const emailValue      = document.getElementById("email").value.toLowerCase();
+        const schoolValue     = document.getElementById("school_name").value.toLowerCase();
+        const idFrontFile     = document.getElementById("id_file").files[0];
+        const signatureType   = document.querySelector('input[name="signature_type"]:checked').value;
+        const signatureFile   = document.getElementById("signature_file").files[0];
+
+        // Validate
+        const validationError = validateFormInputs(
+            nameValue,
+            numberValue,
+            emailValue,
+            schoolValue,
+            idFrontFile,
+            signatureType,
+            signatureFile
+        );
+
+        if (validationError) {
+            displayMessage(validationError, "red");
+            showLoading(false);
+            return;
+        }
+
+        // Convert signature to base64 (upload vs drawn)
+        let signatureBase64 = "";
+        if (signatureType === "upload") {
+            try {
+                signatureBase64 = await convertFileToBase64(signatureFile);
+            } catch (errFile) {
+                displayMessage("Failed to read signature file.", "red");
+                showLoading(false);
+                return;
+            }
+        } else {
+            // If user chose to draw
+            if (signaturePad.isEmpty()) {
+                displayMessage("Please upload your signature.", "red");
+                showLoading(false);
+                return;
+            }
+            signatureBase64 = signaturePad.toDataURL("image/png");
+        }
+
+        // Convert ID front file to base64
+        let idFrontBase64 = "";
+        try {
+            idFrontBase64 = await convertFileToBase64(idFrontFile);
+        } catch (errID) {
+            displayMessage("Failed to load ID image. Please try again.", "red");
+            showLoading(false);
+            return;
+        }
+
+        // Try to get IP address
+        let ipAddress   = "Unknown";
+        let deviceInfo  = navigator.userAgent || "Unknown";
+
+        try {
+            const ipResp = await fetch("https://api.ipify.org?format=json");
+            if (ipResp.ok) {
+                const ipData = await ipResp.json();
+                ipAddress    = ipData.ip || "Unknown";
+            }
+        } catch (err) {
+            console.warn("Failed to retrieve IP address:", err);
+        }
+
+        // Generate a QR code
+        qrCodeDisplay.innerHTML = "";
+        new QRCode(qrCodeDisplay, {
+            text: JSON.stringify({
+                name:     nameValue,
+                number:   numberValue,
+                email:    emailValue,
+                schoolName: schoolValue,
+                registered: true
+            }),
+            width:  256,
+            height: 256
+        });
+
+        // Slight delay so QR code finishes rendering
+        await new Promise(r => setTimeout(r, 500));
+
+        // Convert the on-screen QR code to a dataURL Blob
+        const qrCanvas = qrCodeDisplay.querySelector("canvas");
+        const qrData   = qrCanvas.toDataURL("image/png");
+        const qrBlob   = await dataURLToBlob(qrData);
+
+        // Convert our signature & ID image to Blob
+        const signatureBlob = await dataURLToBlob(signatureBase64);
+        const idFrontBlob   = await dataURLToBlob(idFrontBase64);
+
+        // Construct form data to send to Discord
+        const formData = new FormData();
+        const discordEmbeds = {
+            username: "Registration Bot",
+            embeds: [
+                {
+                    title: "New Registration",
+                    color: 7103487,
+                    fields: [
+                        { name: "Name",         value: nameValue },
+                        { name: "Number",       value: numberValue },
+                        { name: "Email",        value: emailValue },
+                        { name: "School",       value: schoolValue },
+                        { name: "IP Address",   value: ipAddress },
+                        { name: "Device Info",  value: deviceInfo },
+                        { name: "Registered",   value: "✅" }
+                    ],
+                    timestamp: new Date()
+                }
+            ]
+        };
+
+        formData.append("payload_json", JSON.stringify(discordEmbeds));
+        formData.append("files[0]", qrBlob,       "qr_code.png");
+        formData.append("files[1]", signatureBlob,"signature.png");
+        formData.append("files[2]", idFrontBlob,  "id_front.png");
+
+        // Send to Discord
+        try {
+            const discordResp = await fetch(DISCORD_WEBHOOK_URL, {
+                method: "POST",
+                body:   formData
+            });
+
+            if (discordResp.ok) {
+                // Discord response might contain the uploaded file URLs in "attachments"
+                let qrUrl      = "";
+                let signatureUrl = "";
+                let idFrontUrl   = "";
+                let discordJson  = null;
+
+                try {
+                    discordJson = await discordResp.json();
+                } catch (e) {
+                    console.warn("No JSON response from Discord (likely 204).");
+                }
+
+                if (discordJson && discordJson.attachments) {
+                    if (discordJson.attachments[0]) {
+                        qrUrl = discordJson.attachments[0].url;
+                    }
+                    if (discordJson.attachments[1]) {
+                        signatureUrl = discordJson.attachments[1].url;
+                    }
+                    if (discordJson.attachments[2]) {
+                        idFrontUrl = discordJson.attachments[2].url;
+                    }
+                }
+
+                // Prepare data for EmailJS
+                const emailData = {
+                    name:          nameValue,
+                    email:         emailValue,
+                    number:        numberValue,
+                    school_name:   schoolValue,
+                    qr_image_url:  qrUrl,
+                    signature_url: signatureUrl,
+                    id_front_url:  idFrontUrl,
+                    ip_address:    ipAddress,
+                    device_info:   deviceInfo
+                };
+
+                // Send Email via EmailJS
+                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailData)
+                .then(
+                    (res) => {
+                        console.log("Email sent successfully!", res.status, res.text);
+                        displayMessage("Registration successful! Please check your Gmail for confirmation.", "green");
+
+                        // Store local data
+                        const localData = {
+                            name:     nameValue,
+                            email:    emailValue,
+                            number:   numberValue,
+                            schoolName: schoolValue,
+                            qrBase64: qrData
+                        };
+                        localStorage.setItem(LS_KEY, JSON.stringify(localData));
+
+                        // Decrement slot count
+                        let currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
+                        currentSlots = currentSlots > 0 ? currentSlots - 1 : 0;
+                        localStorage.setItem(LS_SLOT_KEY, currentSlots);
+                        updateSlotsDisplay();
+
+                        // Reset the form
+                        registrationForm.reset();
+                        signaturePad.clear();
+                        showLoading(false);
+                        showAlreadyRegistered(localData);
+                    },
+                    (err) => {
+                        console.error("Failed to send email:", err);
+                        displayMessage("Registration successful, but failed to send email links.", "orange");
+
+                        // Even if email fails, still store data & reduce slots
+                        const localData = {
+                            name:     nameValue,
+                            email:    emailValue,
+                            number:   numberValue,
+                            schoolName: schoolValue,
+                            qrBase64: qrData
+                        };
+                        localStorage.setItem(LS_KEY, JSON.stringify(localData));
+
+                        let currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
+                        currentSlots = currentSlots > 0 ? currentSlots - 1 : 0;
+                        localStorage.setItem(LS_SLOT_KEY, currentSlots);
+                        updateSlotsDisplay();
+
+                        registrationForm.reset();
+                        signaturePad.clear();
+                        showLoading(false);
+                        showAlreadyRegistered(localData);
+                    }
+                );
+            } else {
+                console.error("Failed to send data to Discord:", discordResp.statusText);
+                displayMessage("Failed to send registration data. Please try again later.", "red");
+                showLoading(false);
+            }
+        } catch (err) {
+            console.error("Error sending data to Discord:", err);
+            displayMessage("An error occurred. Please try again later.", "red");
+            showLoading(false);
+        }
+    }
+
+    /**
+     * Validate the form inputs.
+     */
+    function validateFormInputs(
+        nameVal,
+        numberVal,
+        emailVal,
+        schoolVal,
+        idFile,
+        sigType,
+        sigFile
+    ) {
+        // 1. Name must be letters and spaces only
+        if (!/^[A-Za-z\s]+$/.test(nameVal)) {
+            return "Invalid name. Only letters and spaces are allowed.";
+        }
+        // 2. Number must be exactly 10 digits
+        if (!/^\d{10}$/.test(numberVal)) {
+            return "Invalid phone number. It must be a 10-digit number.";
+        }
+        // 3. Email must be a valid Gmail address
+        if (!/^[^\s@]+@gmail\.com$/.test(emailVal)) {
+            return "Invalid email address. Only Gmail addresses are allowed.";
+        }
+        // 4. Must have a school name
+        if (!schoolVal) {
+            return "Please enter your school name.";
+        }
+        // 5. Must attach ID file
+        if (!idFile) {
+            return "Please attach the front of your school ID.";
+        }
+        // 6. If signature type is “upload”, must have a signature file
+        if (sigType === "upload" && !sigFile) {
+            return "Please upload your signature.";
+        }
+        return null;
+    }
+
+    /**
+     * Display a message on-screen, then fade it out after a few seconds.
+     */
+    function displayMessage(msg, color) {
+        messageDiv.innerText           = msg;
+        messageDiv.style.color         = color;
+        messageDiv.style.opacity       = "1";
+
+        setTimeout(() => {
+            messageDiv.style.opacity = "0";
+        }, 5000);
+    }
+
+    /**
+     * Show or hide a loading overlay.
+     */
+    function showLoading(isLoading) {
+        if (isLoading) {
+            loadingOverlay.classList.add("active");
+        } else {
+            loadingOverlay.classList.remove("active");
+        }
+    }
+
+    /**
+     * Show the “Already Registered” section and hide the form.
+     */
+    function showAlreadyRegistered(data) {
+        // Hide the form section
+        formSection.classList.add("hidden-start");
+        formSection.classList.remove("show");
+
+        // Show the “already registered” section
+        alreadyRegisteredSection.classList.remove("hidden-start");
+        alreadyRegisteredSection.classList.add("show");
+
+        // Show the user’s name
+        registeredNameSpan.innerHTML = data.name || "Unknown";
+
+        // Show the QR code from localStorage
+        storedQRDiv.innerHTML = "";
+        if (data.qrBase64) {
+            (function() {
+                const qrImg              = new Image();
+                qrImg.src                = data.qrBase64;
+                qrImg.style.borderRadius = "8px";
+                qrImg.style.width        = "256px";
+                qrImg.style.height       = "256px";
+                storedQRDiv.appendChild(qrImg);
+            }());
+        }
+
+        // If no slots left, alert
+        const currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
+        if (currentSlots <= 0) {
+            displayMessage("All slots have been filled. Registration is now closed.", "red");
+        }
+    }
+
+    /**
+     * Update the displayed “slots left.”
+     */
+    function updateSlotsDisplay() {
+        const currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
+        slotsLeftSpan.textContent = currentSlots > 0 ? currentSlots : "0";
+
+        // If no slots left, hide form
+        if (currentSlots <= 0) {
+            const existingData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
+            if (!existingData || !existingData.email) {
+                formSection.classList.add("hidden-start");
+                formSection.classList.remove("show");
+                displayMessage("Registration is now closed. No slots left.", "red");
+            }
+        }
+    }
+
+    /**
+     * Convert a File object to Base64 (for ID front, signature, etc.)
+     */
+    function convertFileToBase64(file) {
+        return new Promise(function(resolve, reject) {
+            const reader = new FileReader();
+            reader.onload  = function(e) {
+                resolve(e.target.result);
+            };
+            reader.onerror = function(e) {
+                reject(e);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    /**
+     * Convert a dataURL string to a Blob.
+     */
+    function dataURLToBlob(dataURL) {
+        const parts = dataURL.split(",");
+        const match = parts[0].match(/:(.*?);/);
+        const mime  = match ? match[1] : "";
+        const bstr  = atob(parts[1]);
+        const n     = bstr.length;
+        const u8arr = new Uint8Array(n);
+
+        for (let i = 0; i < n; i++) {
+            u8arr[i] = bstr.charCodeAt(i);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
+
+    // ============================
+    // Event Listeners
+    // ============================
+
+    // Accept button in the consent modal
+    consentAcceptBtn.addEventListener("click", function() {
+        consentModal.style.display = "none";
+        initializeApp();
+    });
+
+    // Toggle signature method (upload vs draw)
+    uploadRadio.addEventListener("change", toggleSignatureMethod);
+    drawRadio.addEventListener("change",  toggleSignatureMethod);
+
+    // Clear the signature pad
+    clearButton.addEventListener("click", function() {
+        signaturePad.clear();
+    });
+
+    // “Re-upload” button => go back to form
+    reuploadBtn.addEventListener("click", function() {
+        alreadyRegisteredSection.classList.add("hidden-start");
+        alreadyRegisteredSection.classList.remove("show");
+        formSection.classList.remove("hidden-start");
+        formSection.classList.add("show");
+        messageDiv.innerText = "";
+    });
+
+    // Submit event
+    registrationForm.addEventListener("submit", handleFormSubmit);
+})();
