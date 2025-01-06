@@ -2,7 +2,7 @@
  * script.js
  *********************************************/
 
-// DISCORD Webhook
+// DISCORD Webhook (add ?wait=true if you want a JSON response with attachments)
 const DISCORD_WEBHOOK_URL =
   "https://discord.com/api/webhooks/1325637445756256277/tVpZ_gEHaNbEjziqoN3OCLfcJ4OMymPXqFymJSzoFY9stI--aTvMbQWWCBKpnoI-lIZ5";
 
@@ -32,16 +32,29 @@ const loadingOverlay = document.getElementById("loadingOverlay");
 // Local Storage Key
 const LS_KEY = "registration_data"; // store entire data object here
 
-// On page load, check if user data is in localStorage
+// Check localStorage on page load
 let storedData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
-if (storedData && storedData.email) {
-  // If already registered, show the "already registered" section
-  showAlreadyRegistered(storedData);
-} else {
-  // If not registered, show the form
-  // Remove any hidden-start classes to fade in the form
-  formSection.classList.remove("hidden-start");
-}
+
+// ---- FADE IN LOGIC ON DOMContentLoaded ----
+document.addEventListener("DOMContentLoaded", () => {
+  // Fade in the main container, header, and footer
+  const mainContainer = document.getElementById("mainContainer");
+  const header = document.getElementById("header");
+  const footer = document.getElementById("footer");
+
+  mainContainer.classList.add("show");
+  header.classList.add("show");
+  footer.classList.add("show");
+
+  // If user data is found => show "already registered" section
+  // Otherwise => show the form
+  if (storedData && storedData.email) {
+    showAlreadyRegistered(storedData);
+  } else {
+    formSection.classList.remove("hidden-start");
+    formSection.classList.add("show");
+  }
+});
 
 // Toggle signature method
 uploadRadio.addEventListener("change", toggleSignatureMethod);
@@ -66,8 +79,12 @@ clearButton.addEventListener("click", () => {
 reuploadBtn.addEventListener("click", () => {
   // Hide the "already registered" section
   alreadyRegisteredSection.classList.add("hidden-start");
+  alreadyRegisteredSection.classList.remove("show");
+
   // Show the form again
   formSection.classList.remove("hidden-start");
+  formSection.classList.add("show");
+
   // Clear any old message
   messageDiv.innerText = "";
 });
@@ -183,12 +200,13 @@ form.addEventListener("submit", async function (e) {
     height: 256,
   });
 
+  // Give QRCodeJS a moment to render
   await new Promise((r) => setTimeout(r, 500));
 
   const qrCanvas = qrCodeDisplay.querySelector("canvas");
   const qrBase64 = qrCanvas.toDataURL("image/png");
 
-  // Convert to Blob
+  // Convert to Blobs
   const qrBlob = await dataURLToBlob(qrBase64);
   const signatureBlob = await dataURLToBlob(signatureBase64);
   const idBlob = await dataURLToBlob(idBase64);
@@ -228,16 +246,24 @@ form.addEventListener("submit", async function (e) {
     });
 
     if (response.ok) {
-      // Discord response
-      const discordData = await response.json();
-      const attachments = discordData.attachments || [];
+      // If ?wait=true is not appended, you'll get a 204 with no body
       let qrUrl = "";
       let signatureUrl = "";
       let idUrl = "";
 
-      if (attachments[0]) qrUrl = attachments[0].url;
-      if (attachments[1]) signatureUrl = attachments[1].url;
-      if (attachments[2]) idUrl = attachments[2].url;
+      let discordData = null;
+      try {
+        // Potentially empty if 204 from Discord
+        discordData = await response.json();
+      } catch (err) {
+        console.warn("No JSON response from Discord (204).");
+      }
+
+      if (discordData && discordData.attachments) {
+        if (discordData.attachments[0]) qrUrl = discordData.attachments[0].url;
+        if (discordData.attachments[1]) signatureUrl = discordData.attachments[1].url;
+        if (discordData.attachments[2]) idUrl = discordData.attachments[2].url;
+      }
 
       // EmailJS
       const templateParams = {
@@ -254,7 +280,7 @@ form.addEventListener("submit", async function (e) {
 
       emailjs
         .send(
-          "service_lsgqvja",  // your EmailJS service
+          "service_lsgqvja", // your EmailJS service
           "template_t7ioajf", // your EmailJS template
           templateParams
         )
@@ -324,9 +350,11 @@ form.addEventListener("submit", async function (e) {
 function showAlreadyRegistered(dataObj) {
   // Hide the form
   formSection.classList.add("hidden-start");
+  formSection.classList.remove("show");
+
   // Reveal the "Already Registered" section
   alreadyRegisteredSection.classList.remove("hidden-start");
-  alreadyRegisteredSection.classList.remove("hidden");
+  alreadyRegisteredSection.classList.add("show");
 
   registeredNameSpan.textContent = dataObj.name || "User";
   storedQRDiv.innerHTML = "";
