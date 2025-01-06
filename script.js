@@ -29,18 +29,27 @@ const reuploadBtn = document.getElementById("reuploadBtn");
 const formSection = document.getElementById("formSection");
 const loadingOverlay = document.getElementById("loadingOverlay");
 
+const mainContainer = document.getElementById("mainContainer");
+const headerEl = document.getElementById("header");
+const footerEl = document.getElementById("footer");
+
 // Local Storage Key
 const LS_KEY = "registration_data"; // store entire data object here
 
 // On page load, check if user data is in localStorage
-let storedData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
-if (storedData && storedData.email) {
-  // Show "already registered" section
-  showAlreadyRegistered(storedData);
-} else {
-  // Show the form
-  formSection.classList.remove("hidden");
-}
+window.addEventListener("DOMContentLoaded", () => {
+  fadeInAll();
+
+  let storedData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
+  if (storedData && storedData.email) {
+    // Show "already registered" section
+    showAlreadyRegistered(storedData);
+  } else {
+    // Show the form
+    formSection.classList.remove("hidden-start");
+    formSection.classList.add("show");
+  }
+});
 
 // Toggle signature method
 uploadRadio.addEventListener("change", toggleSignatureMethod);
@@ -65,8 +74,11 @@ clearButton.addEventListener("click", () => {
 reuploadBtn.addEventListener("click", () => {
   // Just show the form again
   messageDiv.innerText = "";
-  alreadyRegisteredSection.classList.add("hidden");
-  formSection.classList.remove("hidden");
+  alreadyRegisteredSection.classList.remove("show");
+  alreadyRegisteredSection.classList.add("hidden-start");
+
+  formSection.classList.remove("hidden-start");
+  formSection.classList.add("show");
 });
 
 // Form Submit
@@ -266,7 +278,7 @@ form.addEventListener("submit", async function (e) {
               email,
               number,
               schoolName,
-              qrBase64,
+              qrBase64
             };
             localStorage.setItem(LS_KEY, JSON.stringify(storeObj));
 
@@ -290,7 +302,7 @@ form.addEventListener("submit", async function (e) {
               email,
               number,
               schoolName,
-              qrBase64,
+              qrBase64
             };
             localStorage.setItem(LS_KEY, JSON.stringify(storeObj));
 
@@ -358,9 +370,12 @@ function dataURLToBlob(dataurl) {
 // Show Already Registered UI
 function showAlreadyRegistered(dataObj) {
   // Hide form
-  formSection.classList.add("hidden");
+  formSection.classList.remove("show");
+  formSection.classList.add("hidden-start");
+
   // Show already-registered section
-  alreadyRegisteredSection.classList.remove("hidden");
+  alreadyRegisteredSection.classList.remove("hidden-start");
+  alreadyRegisteredSection.classList.add("show");
 
   registeredNameSpan.textContent = dataObj.name || "User";
   storedQRDiv.innerHTML = "";
@@ -373,4 +388,15 @@ function showAlreadyRegistered(dataObj) {
     img.style.borderRadius = "8px";
     storedQRDiv.appendChild(img);
   }
+}
+
+/** Animate in all fade-init elements */
+function fadeInAll() {
+  const fadeElems = document.querySelectorAll(".fade-init");
+  fadeElems.forEach((elem) => {
+    // delay to ensure rendering
+    setTimeout(() => {
+      elem.classList.add("show");
+    }, 200);
+  });
 }
