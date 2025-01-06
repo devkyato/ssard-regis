@@ -40,8 +40,8 @@
   }
 
   /**
-   * runRegistrationLogic: your original code, adapted to run immediately
-   * after libs are loaded (no DOMContentLoaded needed).
+   * runRegistrationLogic: your original code, adapted to remove “slots” logic,
+   * fade in the form if not registered, show “You are registered” upon success, etc.
    */
   function runRegistrationLogic() {
     // ============================
@@ -52,8 +52,6 @@
     const EMAILJS_TEMPLATE_ID    = "template_t7ioajf";
     const EMAILJS_USER_ID        = "SSDcjFdMjBWH15ZIq"; 
     const LS_KEY                 = "regg";
-    const LS_SLOT_KEY            = "regg";
-    const INITIAL_SLOTS          = 180;
 
     // Initialize EmailJS (now loaded)
     emailjs.init(EMAILJS_USER_ID);
@@ -80,7 +78,6 @@
     const storedQRDiv              = document.getElementById("storedQR");
     const reuploadBtn              = document.getElementById("reuploadBtn");
     const qrCodeDisplay            = document.getElementById("storedQR");
-    const slotsLeftSpan            = document.getElementById("slotsLeft");
     const canvas                   = document.getElementById("signature-pad");
 
     // Create Signature Pad instance
@@ -90,11 +87,6 @@
      * Initialize the registration form’s default state
      */
     function initializeApp() {
-      if (!localStorage.getItem(LS_SLOT_KEY)) {
-        localStorage.setItem(LS_SLOT_KEY, INITIAL_SLOTS);
-      }
-      updateSlotsDisplay();
-
       // Check if user already registered
       const existingData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
       if (existingData && existingData.email) {
@@ -102,18 +94,16 @@
         consentModal.style.display = "none";
         showAlreadyRegistered(existingData);
       } else {
-        // If not registered, check if we have slots
-          mainContainer.classList.add("show");
-          header.classList.add("show");
-          footer.classList.add("show");
-          displayMessage("Registration is now closed. No slots left.", "red");
+        // Not registered => fade in the form
+        consentModal.style.display = "block"; // or "none" if you want to skip
       }
 
-      // If the modal is hidden, show the main container
+      // If the modal is hidden, show the main container + form
       if (!consentModal.style.display || consentModal.style.display === "none") {
         mainContainer.classList.add("show");
         header.classList.add("show");
         footer.classList.add("show");
+        formSection.classList.add("show");
       }
     }
 
@@ -303,7 +293,7 @@
             .then(
               (res) => {
                 console.log("Email sent successfully!", res.status, res.text);
-                displayMessage("Registration successful! Please check your Gmail for confirmation.", "green");
+                displayMessage("You are registered! Please check your Gmail for confirmation.", "green");
 
                 const localData = {
                   name:       nameValue,
@@ -313,12 +303,6 @@
                   qrBase64:   qrData
                 };
                 localStorage.setItem(LS_KEY, JSON.stringify(localData));
-
-                // Decrement slots
-                let currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
-                currentSlots = currentSlots > 0 ? currentSlots - 1 : 0;
-                localStorage.setItem(LS_SLOT_KEY, currentSlots);
-                updateSlotsDisplay();
 
                 registrationForm.reset();
                 signaturePad.clear();
@@ -337,11 +321,6 @@
                   qrBase64:   qrData
                 };
                 localStorage.setItem(LS_KEY, JSON.stringify(localData));
-
-                let currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
-                currentSlots = currentSlots > 0 ? currentSlots - 1 : 0;
-                localStorage.setItem(LS_SLOT_KEY, currentSlots);
-                updateSlotsDisplay();
 
                 registrationForm.reset();
                 signaturePad.clear();
@@ -409,9 +388,11 @@
     }
 
     function showAlreadyRegistered(data) {
+      // Hide the form
       formSection.classList.add("hidden-start");
       formSection.classList.remove("show");
 
+      // Show the "already registered" area
       alreadyRegisteredSection.classList.remove("hidden-start");
       alreadyRegisteredSection.classList.add("show");
 
@@ -425,25 +406,6 @@
         qrImg.style.width        = "256px";
         qrImg.style.height       = "256px";
         storedQRDiv.appendChild(qrImg);
-      }
-
-      const currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
-      if (currentSlots <= 0) {
-        displayMessage("All slots have been filled. Registration is now closed.", "red");
-      }
-    }
-
-    function updateSlotsDisplay() {
-      const currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
-      slotsLeftSpan.textContent = currentSlots > 0 ? currentSlots : "0";
-
-      if (currentSlots <= 0) {
-        const existingData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
-        if (!existingData || !existingData.email) {
-          formSection.classList.add("hidden-start");
-          formSection.classList.remove("show");
-          displayMessage("Registration is now closed. No slots left.", "red");
-        }
       }
     }
 
@@ -473,12 +435,20 @@
     // Attach event listeners
     //
     consentAcceptBtn.addEventListener("click", () => {
+      // Hide modal
       consentModal.style.display = "none";
-      initializeApp();
+      // Show container + form (fade in)
+      mainContainer.classList.add("show");
+      header.classList.add("show");
+      footer.classList.add("show");
+      formSection.classList.add("show");
     });
+
     uploadRadio.addEventListener("change", toggleSignatureMethod);
     drawRadio.addEventListener("change",  toggleSignatureMethod);
+
     clearButton.addEventListener("click", () => signaturePad.clear());
+
     reuploadBtn.addEventListener("click", () => {
       alreadyRegisteredSection.classList.add("hidden-start");
       alreadyRegisteredSection.classList.remove("show");
@@ -486,6 +456,7 @@
       formSection.classList.add("show");
       messageDiv.innerText = "";
     });
+
     registrationForm.addEventListener("submit", handleFormSubmit);
   }
 
