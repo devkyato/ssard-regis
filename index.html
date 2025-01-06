@@ -2,23 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>APC Students' Society Registration</title>
+
+  <!-- Main Styles -->
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts (Poppins) -->
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap"
     rel="stylesheet"
-  />
-
-  <!-- Font Awesome for Icons: Updated SRI Hash -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    integrity="sha512-l2++ZKBdxphcBiFfOW4vERD8hHGzlf4oQDPSEEGMPZMK8i3Gd+IVFlYim0UrTNj1kfm58h8PSI1e24uF8MpGfA=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
   />
 </head>
 <body>
@@ -26,10 +19,15 @@
   <!-- Consent Modal -->
   <div id="consentModal" class="consent-modal">
     <div class="consent-content">
-      <h2><i class="fas fa-user-shield"></i> Privacy Policy & Consent</h2>
-      <p>We value your privacy. By registering, you consent to the collection and use of your data for registration purposes. All data gathered will be deleted upon completion of the online registration, and your registration details will be sent to your Gmail account.</p>
+      <h2>Privacy Policy &amp; Consent</h2>
+      <p>
+        We value your privacy. By registering, you consent to the collection and
+        use of your data for registration purposes. All data gathered will be
+        deleted upon completion of the online registration, and your registration
+        details will be sent to your Gmail account.
+      </p>
       <button id="consentAcceptBtn" class="consent-btn">
-        <i class="fas fa-check-circle"></i> I Consent
+        I Consent
       </button>
     </div>
   </div>
@@ -50,9 +48,9 @@
           alt="APC Logo"
         />
       </div>
-      <h1><i class="fas fa-registered"></i> APC Registration Portal</h1>
+      <h1>APC Registration Portal</h1>
       <div class="slot-counter">
-        <i class="fas fa-users"></i> Slots Left: <span id="slotsLeft">180</span>
+        Slots Left: <span id="slotsLeft">180</span>
       </div>
     </header>
 
@@ -62,15 +60,15 @@
       class="already-registered fade-init hidden-start"
     >
       <h2>
-        Welcome Back, <span id="registeredName"></span>! <i class="fas fa-smile"></i>
+        Welcome Back, <span id="registeredName"></span>!
       </h2>
       <p>You have already registered.</p>
       <div class="qr-preview">
-        <h3>Your QR Code <i class="fas fa-qrcode"></i></h3>
+        <h3>Your QR Code</h3>
         <div id="storedQR" class="qr-display"></div>
       </div>
       <button id="reuploadBtn" class="reupload-btn">
-        <i class="fas fa-upload"></i> Re-upload Registration
+        Re-upload Registration
       </button>
     </div>
 
@@ -80,7 +78,7 @@
         <div class="form-grid">
           <!-- Left Column -->
           <div>
-            <label for="name"><i class="fas fa-user"></i> Full Name</label>
+            <label for="name">Full Name</label>
             <input
               type="text"
               id="name"
@@ -89,7 +87,7 @@
               placeholder="Enter your full name"
             />
 
-            <label for="number"><i class="fas fa-phone"></i> Contact Number</label>
+            <label for="number">Contact Number</label>
             <input
               type="text"
               id="number"
@@ -98,7 +96,7 @@
               placeholder="Enter your phone number"
             />
 
-            <label for="email"><i class="fas fa-envelope"></i> Email</label>
+            <label for="email">Email</label>
             <input
               type="email"
               id="email"
@@ -107,7 +105,7 @@
               placeholder="Enter your Gmail address"
             />
 
-            <label for="school_name"><i class="fas fa-university"></i> School Name</label>
+            <label for="school_name">School Name</label>
             <input
               type="text"
               id="school_name"
@@ -119,11 +117,11 @@
 
           <!-- Right Column -->
           <div>
-            <label for="id_file"><i class="fas fa-id-card"></i> Front of School ID</label>
+            <label for="id_file">Front of School ID</label>
             <input type="file" id="id_file" accept="image/*" required />
 
             <div class="signature-options">
-              <label><i class="fas fa-signature"></i> Signature Type:</label>
+              <label>Signature Type:</label>
               <div class="radio-group">
                 <input
                   type="radio"
@@ -132,7 +130,7 @@
                   value="upload"
                   checked
                 />
-                <label for="upload"><i class="fas fa-upload"></i> Upload</label>
+                <label for="upload">Upload</label>
 
                 <input
                   type="radio"
@@ -140,28 +138,32 @@
                   name="signature_type"
                   value="draw"
                 />
-                <label for="draw"><i class="fas fa-pencil-alt"></i> Draw</label>
+                <label for="draw">Draw</label>
               </div>
             </div>
 
             <div id="upload_section" class="upload-section">
               <label for="signature_file">
-                <i class="fas fa-file-image"></i> Upload Signature
+                Upload Signature
               </label>
-              <input type="file" id="signature_file" accept="image/*" />
+              <input
+                type="file"
+                id="signature_file"
+                accept="image/*"
+              />
             </div>
 
             <div id="draw_section" class="draw-section" style="display: none;">
               <canvas id="signature-pad" width="400" height="150"></canvas>
               <button type="button" id="clear">
-                <i class="fas fa-eraser"></i> Clear Signature
+                Clear Signature
               </button>
             </div>
           </div>
         </div>
 
         <button type="submit" class="register-btn">
-          <i class="fas fa-paper-plane"></i> Register
+          Register
         </button>
       </form>
 
@@ -173,44 +175,27 @@
   <footer class="footer fade-init hidden-start" id="footer">
     <p>&copy; Asia Pacific College, 2025. All rights reserved.</p>
     <div class="social-links">
-      <a href="https://twitter.com/apc" target="_blank">
-        <i class="fab fa-twitter"></i> Twitter
-      </a>
-      <a href="https://facebook.com/apc" target="_blank">
-        <i class="fab fa-facebook-f"></i> Facebook
-      </a>
-      <a href="https://instagram.com/apc" target="_blank">
-        <i class="fab fa-instagram"></i> Instagram
-      </a>
-      <a href="https://www.apc.edu.ph" target="_blank">
-        <i class="fas fa-globe"></i> APC Website
-      </a>
+      <a href="https://twitter.com/apc" target="_blank">Twitter</a>
+      <a href="https://facebook.com/apc" target="_blank">Facebook</a>
+      <a href="https://instagram.com/apc" target="_blank">Instagram</a>
+      <a href="https://www.apc.edu.ph" target="_blank">APC Website</a>
     </div>
   </footer>
 
-  <!-- Libraries (added `defer` to help avoid parser blocking warnings) -->
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"
-  ></script>
-  <script
-    defer
-    src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
-  ></script>
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"
-  ></script>
+  <!-- Libraries (load before emailjs.init) -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-  <!-- EmailJS Init -->
+  <!-- EmailJS Init (must be after emailjs-com is loaded) -->
   <script>
     (function() {
-      // Replace with your public key from EmailJS
+      // Replace with your actual EmailJS public key
       emailjs.init("SSDcjFdMjBWH15ZIq");
     })();
   </script>
 
   <!-- Main Script -->
-  <script defer src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
