@@ -1,13 +1,10 @@
 (function() {
-  // ============================
-  // 1) Dynamically Load Libraries from CDN
-  // ============================
+  //
+  // 1) Dynamically load external scripts from CDN
+  //
   const libsToLoad = [
-    // Signature Pad
     "https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js",
-    // QRCode.js
     "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
-    // EmailJS
     "https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"
   ];
 
@@ -24,14 +21,19 @@
     });
   }
 
-  /**
-   * onAllLibsLoaded: called once all external libraries are loaded
-   * This will contain your existing registration code.
-   */
-  function onAllLibsLoaded() {
+  //
+  // 2) Once libraries are loaded, we run initRegistrationApp()
+  //
+  async function initRegistrationApp() {
+    // Now that EmailJS is loaded, initialize with your public key:
+    emailjs.init("SSDcjFdMjBWH15ZIq");
+
     // ============================
-    // Constants & Configuration
+    // Below is your registration code
+    // (the same code you posted, but with the assumption that
+    // signaturePad, QRCode, and emailjs are now globally available).
     // ============================
+
     const DISCORD_WEBHOOK_URL    = "https://discord.com/api/webhooks/1325637445756256277/tVpZ_gEHaNbEjziqoN3OCLfcJ4OMymPXqFymJSzoFY9stI--aTvMbQWWCBKpnoI-lIZ5";
     const EMAILJS_SERVICE_ID     = "service_lsgqvja";
     const EMAILJS_TEMPLATE_ID    = "template_t7ioajf";
@@ -39,9 +41,6 @@
     const LS_KEY                 = "registration_data_ssard";
     const LS_SLOT_KEY            = "registration_slots_left";
     const INITIAL_SLOTS          = 180;
-
-    // 1. Initialize EmailJS (now that it’s loaded)
-    emailjs.init(EMAILJS_USER_ID);
 
     // ============================
     // Grab DOM Elements
@@ -59,22 +58,26 @@
     const drawRadio                = document.getElementById("draw");
     const uploadSection            = document.getElementById("upload_section");
     const drawSection              = document.getElementById("draw_section");
-    // Note: “clearButton” was referencing the same ID as the canvas. Updated to “clear” button ID if you have it:
-    const clearButton              = document.getElementById("clear"); 
+    // NOTE: you had `clearButton = document.getElementById("signature-pad")`,
+    // but "signature-pad" is actually a <canvas> ID. 
+    // If you actually have a "clear" button, adapt it below:
+    const clearButton              = document.getElementById("clear");
+    
     const alreadyRegisteredSection = document.getElementById("alreadyRegisteredSection");
     const registeredNameSpan       = document.getElementById("registeredName");
     const storedQRDiv              = document.getElementById("storedQR");
     const reuploadBtn              = document.getElementById("reuploadBtn");
     const qrCodeDisplay            = document.getElementById("storedQR");
     const slotsLeftSpan            = document.getElementById("slotsLeft");
-    // The actual <canvas> for signature:
-    const canvas                   = document.getElementById("canvas");
+    const canvas                   = document.getElementById("signature-pad"); // <canvas id="signature-pad">
 
-    // 2. Create Signature Pad instance (SignaturePad is now available globally)
+    // ============================
+    // Create SignaturePad instance
+    // ============================
     const signaturePad = new SignaturePad(canvas);
 
     // ============================
-    // Main Functions
+    // Functions
     // ============================
 
     function initializeApp() {
@@ -83,27 +86,25 @@
       }
       updateSlotsDisplay();
 
-      // Check if user already registered
       const existingData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
       if (existingData && existingData.email) {
         // Hide the consent modal
         consentModal.style.display = "none";
         showAlreadyRegistered(existingData);
       } else {
-        // If not registered, check if there are slots
+        // Not registered
         const currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
         if (currentSlots > 0) {
           // Show the consent modal
           consentModal.style.display = "block";
         } else {
-          // No slots left => show everything but display a message
+          // No slots left
           mainContainer.classList.add("show");
           header.classList.add("show");
           footer.classList.add("show");
           displayMessage("Registration is now closed. No slots left.", "red");
         }
       }
-
       if (!consentModal.style.display || consentModal.style.display === "none") {
         mainContainer.classList.add("show");
         header.classList.add("show");
@@ -158,7 +159,6 @@
           return;
         }
       } else {
-        // Drawn signature
         if (signaturePad.isEmpty()) {
           displayMessage("Please upload your signature.", "red");
           showLoading(false);
@@ -204,7 +204,6 @@
       const qrCanvas = qrCodeDisplay.querySelector("canvas");
       const qrData   = qrCanvas.toDataURL("image/png");
       const qrBlob   = await dataURLToBlob(qrData);
-
       const signatureBlob = await dataURLToBlob(signatureBase64);
       const idFrontBlob   = await dataURLToBlob(idFrontBase64);
 
@@ -392,10 +391,10 @@
       storedQRDiv.innerHTML = "";
       if (data.qrBase64) {
         const qrImg = new Image();
-        qrImg.src                = data.qrBase64;
+        qrImg.src = data.qrBase64;
         qrImg.style.borderRadius = "8px";
-        qrImg.style.width        = "256px";
-        qrImg.style.height       = "256px";
+        qrImg.style.width  = "256px";
+        qrImg.style.height = "256px";
         storedQRDiv.appendChild(qrImg);
       }
 
@@ -452,6 +451,7 @@
     uploadRadio.addEventListener("change", toggleSignatureMethod);
     drawRadio.addEventListener("change",  toggleSignatureMethod);
 
+    // Clear signature
     clearButton.addEventListener("click", function() {
       signaturePad.clear();
     });
@@ -467,16 +467,20 @@
     registrationForm.addEventListener("submit", handleFormSubmit);
   }
 
-  // ============================
-  // 2) When DOM is ready, load all scripts from CDN, then run onAllLibsLoaded()
-  // ============================
+  //
+  // 3) “Main” on DOMContentLoaded:
+  //    a) Load each library from CDN (SignaturePad, QRCode, EmailJS).
+  //    b) Then call initRegistrationApp().
+  //
   document.addEventListener("DOMContentLoaded", async () => {
     try {
-      for (const url of libsToLoad) {
-        await loadScript(url); // load each in sequence
+      // Load each library in sequence or in parallel. 
+      // We'll do sequence to ensure correct init if needed:
+      for (const libUrl of libsToLoad) {
+        await loadScript(libUrl);
       }
-      // All libraries loaded => run your main code
-      onAllLibsLoaded();
+      // Now that all are loaded, we can safely run our main code
+      initRegistrationApp();
     } catch (err) {
       console.error("Error loading external libraries:", err);
     }
