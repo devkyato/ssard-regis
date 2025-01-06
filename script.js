@@ -1,14 +1,14 @@
 // script.js
 
-// 1) Discord Webhook URL (replace with your actual webhook URL)
+// 1) Discord Webhook URL
 const DISCORD_WEBHOOK_URL =
   "https://discord.com/api/webhooks/1325637445756256277/tVpZ_gEHaNbEjziqoN3OCLfcJ4OMymPXqFymJSzoFY9stI--aTvMbQWWCBKpnoI-lIZ5";
 
-// Initialize Signature Pad
+// 2) Initialize Signature Pad
 const canvas = document.getElementById("signature-pad");
 const signaturePad = new SignaturePad(canvas);
 
-// Toggle signature method
+// Handle signature type toggle
 const uploadRadio = document.getElementById("upload");
 const drawRadio = document.getElementById("draw");
 const uploadSection = document.getElementById("upload_section");
@@ -33,67 +33,64 @@ clearButton.addEventListener("click", () => {
   signaturePad.clear();
 });
 
-// Form & elements
+// 3) Additional DOM elements
 const form = document.getElementById("registrationForm");
 const messageDiv = document.getElementById("message");
 const qrCodeDisplay = document.getElementById("qr_code_display");
-
-// Already Registered Container
-const alreadyRegisteredContainer = document.getElementById("alreadyRegisteredContainer");
-const storedQrDisplay = document.getElementById("storedQrDisplay");
+const mainContainer = document.getElementById("mainContainer");
+const alreadyRegisteredBlock = document.getElementById("alreadyRegisteredBlock");
+const storedQRBox = document.getElementById("storedQRBox");
 const reuploadBtn = document.getElementById("reuploadBtn");
-
-// Loading Overlay
 const loadingOverlay = document.getElementById("loadingOverlay");
 
-// LocalStorage Key (store entire user object)
-const STORAGE_KEY = "apc_registration";
+// We'll store data in localStorage with the key "apc_registrations"
+let registrations = JSON.parse(localStorage.getItem("apc_registrations")) || {};
 
-// Check if we have a saved registration
-const savedReg = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-
-if (savedReg && savedReg.email) {
-  // They already have a registration
-  form.classList.add("hidden");
-  alreadyRegisteredContainer.classList.remove("hidden");
-
-  // If we have a previously saved QR Code link, show it
-  if (savedReg.qr_image_url) {
-    // Generate or display existing link
-    storedQrDisplay.innerHTML = `
-      <img src="${savedReg.qr_image_url}" alt="QR Code" style="max-width: 240px;" />
-    `;
-  }
+// On page load, check if user has a "currentEmail" in localStorage
+// and show them a previously stored QR if it exists
+let currentEmail = localStorage.getItem("currentEmail");
+if (currentEmail && registrations[currentEmail]) {
+  // Show the "already registered" block
+  showAlreadyRegistered(registrations[currentEmail].qrBase64);
 } else {
-  // No registration found, show the form
-  alreadyRegisteredContainer.classList.add("hidden");
-  form.classList.remove("hidden");
+  alreadyRegisteredBlock.style.display = "none";
 }
 
-// Re-upload Button: show the form again
+// Reupload logic
 reuploadBtn.addEventListener("click", () => {
-  alreadyRegisteredContainer.classList.add("hidden");
-  form.classList.remove("hidden");
+  // Hide the block, show the form
+  alreadyRegisteredBlock.style.display = "none";
+  form.style.display = "block";
 });
 
-// Form submission
+// Device Info & IP
+let userIP = "";
+let deviceInfo = "";
+
+// Get IP (using a free IPify API)
+fetch("https://api.ipify.org?format=json")
+  .then((response) => response.json())
+  .then((data) => {
+    userIP = data.ip || "Unknown IP";
+  })
+  .catch(() => {
+    userIP = "Unknown IP";
+  });
+
+// Gather some basic device info
+deviceInfo = navigator.userAgent || "Unknown Device Info";
+
+// Form Submission
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
-
-  // 1) reCAPTCHA check
-  const recaptchaResponse = grecaptcha.getResponse();
-  if (!recaptchaResponse) {
-    displayMessage("Please complete the reCAPTCHA before submitting.", "red");
-    return;
-  }
-
+  
   // Show loading overlay
-  loadingOverlay.classList.add("active");
+  loadingOverlay.style.display = "flex";
 
-  // 2) Collect user input from form
+  // Get form values
   const name = document.getElementById("name").value.trim();
   const number = document.getElementById("number").value.trim();
-  const email = document.getElementById("email").value.trim();
+  const email = document.getElementById("email").value.trim().toLowerCase();
   const schoolName = document.getElementById("school_name").value.trim();
   const idFile = document.getElementById("id_file").files[0];
 
@@ -111,7 +108,7 @@ form.addEventListener("submit", async function (e) {
   const numberRegex = /^\d{10}$/;
   if (!numberRegex.test(number)) {
     hideLoading();
-    displayMessage("Invalid phone number. Must be 10 digits.", "red");
+    displayMessage("Invalid phone number. It must be a 10-digit number.", "red");
     return;
   }
 
@@ -134,24 +131,10 @@ form.addEventListener("submit", async function (e) {
     return;
   }
 
-  // 3) IP and Device info
-  let userIp = "";
-  let deviceInfo = navigator.userAgent || "Unknown Device";
-
-  try {
-    const ipRes = await fetch("https://api.ipify.org?format=json");
-    const ipData = await ipRes.json();
-    userIp = ipData.ip || "";
-  } catch (error) {
-    console.warn("Failed to get IP:", error);
-    userIp = "Failed to retrieve IP";
-  }
-
-  // 4) Check for localStorage existing registration
-  const existingReg = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-  if (existingReg && existingReg.email === email) {
+  // If they're re-registering with the same email, ask if they'd like to proceed
+  if (registrations[email]) {
     const proceed = confirm(
-      `Email (${email}) is already registered. Overwrite?`
+      `This email (${email}) is already registered. Do you want to overwrite the previous registration?`
     );
     if (!proceed) {
       hideLoading();
@@ -160,7 +143,7 @@ form.addEventListener("submit", async function (e) {
     }
   }
 
-  // Handle signature
+  // Handle Signature
   let signatureBase64 = "";
   if (signatureType === "upload") {
     if (!signatureFile) {
@@ -168,14 +151,19 @@ form.addEventListener("submit", async function (e) {
       displayMessage("Please upload your signature.", "red");
       return;
     }
+    // Convert uploaded image to Base64
     signatureBase64 = await convertFileToBase64(signatureFile);
   } else if (signatureType === "draw") {
     if (signaturePad.isEmpty()) {
       hideLoading();
-      displayMessage("Please provide a drawn signature.", "red");
+      displayMessage("Please provide a signature.", "red");
       return;
     }
     signatureBase64 = signaturePad.toDataURL("image/png");
+  } else {
+    hideLoading();
+    displayMessage("Invalid signature input.", "red");
+    return;
   }
 
   // Convert ID front to Base64
@@ -188,8 +176,7 @@ form.addEventListener("submit", async function (e) {
     return;
   }
 
-  // 5) Generate local QR code
-  qrCodeDisplay.innerHTML = ""; // Clear old
+  // Generate QR Code
   const qrDataObject = {
     name,
     number,
@@ -203,18 +190,20 @@ form.addEventListener("submit", async function (e) {
     width: 256,
     height: 256,
   });
-  // Wait briefly
+
+  // Wait briefly for QR code to generate
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   // Convert the QR code canvas to Base64
   const qrCanvas = qrCodeDisplay.querySelector("canvas");
   const qrBase64 = qrCanvas.toDataURL("image/png");
 
-  // 6) Prepare Discord form data
+  // Prepare Blobs for Discord
   const qrImageBlob = await dataURLToBlob(qrBase64);
   const signatureBlob = await dataURLToBlob(signatureBase64);
   const idFrontBlob = await dataURLToBlob(idBase64);
 
+  // Prepare Discord Payload
   const formData = new FormData();
   const payload = {
     username: "Registration Bot",
@@ -223,12 +212,12 @@ form.addEventListener("submit", async function (e) {
         title: "New Registration",
         color: 0x6c63ff,
         fields: [
-          { name: "Full Name", value: name },
-          { name: "Phone Number", value: number },
+          { name: "Name", value: name },
+          { name: "Number", value: number },
           { name: "Email", value: email },
           { name: "School", value: schoolName },
-          { name: "IP", value: userIp },
-          { name: "Device", value: deviceInfo },
+          { name: "IP Address", value: userIP },
+          { name: "Device Info", value: deviceInfo },
           { name: "Registered", value: "✅" },
         ],
         timestamp: new Date(),
@@ -239,9 +228,9 @@ form.addEventListener("submit", async function (e) {
   formData.append("payload_json", JSON.stringify(payload));
   formData.append("files[0]", qrImageBlob, "qr_code.png");
   formData.append("files[1]", signatureBlob, "signature.png");
-  formData.append("files[2]", idFrontBlob, "id_front.png");
+  formData.append("files[2]", idFrontBlob, "id_front.png"); // The school ID front
 
-  // 7) Send to Discord
+  // Send to Discord Webhook
   try {
     const response = await fetch(DISCORD_WEBHOOK_URL, {
       method: "POST",
@@ -249,6 +238,7 @@ form.addEventListener("submit", async function (e) {
     });
 
     if (response.ok) {
+      // Attempt to get the attachments array from the created message
       const discordData = await response.json();
       const attachments = discordData.attachments || [];
 
@@ -260,93 +250,110 @@ form.addEventListener("submit", async function (e) {
       if (attachments[1]) signatureUrl = attachments[1].url;
       if (attachments[2]) idUrl = attachments[2].url;
 
-      // 8) Send confirmation email using EmailJS
+      // Send confirmation email using EmailJS with the public URLs
       const templateParams = {
-        name: name,
-        email: email,
-        number: number,
+        name,
+        email,
+        number,
         school_name: schoolName,
-        ip_address: userIp,
-        device_info: deviceInfo,
         qr_image_url: qrUrl,
         signature_url: signatureUrl,
-        id_front_url: idUrl
+        id_front_url: idUrl,
+        user_ip: userIP,
+        device_info: deviceInfo
       };
 
       emailjs
         .send(
-          "service_lsgqvja", // <== Your EmailJS service ID
-          "template_t7ioajf", // <== Your EmailJS template ID
+          "service_lsgqvja", // <-- Your EmailJS service ID
+          "template_t7ioajf", // <-- Your EmailJS template ID
           templateParams
         )
         .then(
           function (res) {
-            // Success
+            hideLoading();
             console.log("Email sent successfully!", res.status, res.text);
             displayMessage(
-              "Registration successful! Check your email for the links.",
-              "green"
+              "Registration successful! Check your email for links (QR, signature, ID).",
+              "lime"
             );
-            
-            // 9) Save to localStorage
-            const regObject = {
-              name,
-              email,
-              qr_image_url: qrUrl,
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(regObject));
 
-            // Show that QR in the "alreadyRegisteredContainer" next time
-            hideLoading();
+            // Store in localStorage
+            registrations[email] = {
+              name,
+              number,
+              email,
+              school: schoolName,
+              qrBase64,
+            };
+            localStorage.setItem("apc_registrations", JSON.stringify(registrations));
+            localStorage.setItem("currentEmail", email);
+
+            // Reset form
             form.reset();
             signaturePad.clear();
           },
           function (error) {
-            // Email send fail
+            hideLoading();
             console.log("Failed to send email:", error);
             displayMessage(
-              "Registration successful, but failed to send email.",
+              "Registration successful, but failed to send email links.",
               "orange"
             );
-            
-            // Save anyway
-            const regObject = {
-              name,
-              email,
-              qr_image_url: qrUrl,
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(regObject));
 
-            hideLoading();
+            // Store anyway since Discord was successful
+            registrations[email] = {
+              name,
+              number,
+              email,
+              school: schoolName,
+              qrBase64,
+            };
+            localStorage.setItem("apc_registrations", JSON.stringify(registrations));
+            localStorage.setItem("currentEmail", email);
+
             form.reset();
             signaturePad.clear();
           }
         );
     } else {
-      console.error("Failed to send data to Discord:", response.statusText);
-      displayMessage("Failed to send registration data. Try again later.", "red");
       hideLoading();
+      console.error("Failed to send data to Discord:", response.statusText);
+      displayMessage("Failed to send registration data. Please try again later.", "red");
     }
   } catch (error) {
+    hideLoading();
     console.error("Error sending data to Discord:", error);
     displayMessage("An error occurred. Please try again later.", "red");
-    hideLoading();
   }
 });
 
 // Helper Functions
+function showAlreadyRegistered(qrBase64) {
+  // Show the block
+  alreadyRegisteredBlock.style.display = "block";
+  form.style.display = "none";
 
-function hideLoading() {
-  loadingOverlay.classList.remove("active");
+  // Display the stored QR code
+  storedQRBox.innerHTML = "";
+  if (qrBase64) {
+    const img = document.createElement("img");
+    img.src = qrBase64;
+    img.style.width = "100%";
+    img.style.height = "auto";
+    storedQRBox.appendChild(img);
+  }
 }
 
 function displayMessage(msg, color) {
   messageDiv.innerText = msg;
   messageDiv.style.color = color;
-  // Optionally hide after 5s
-  setTimeout(() => {
-    messageDiv.innerText = "";
-  }, 5000);
+  // Optionally clear the message after some time:
+  // setTimeout(() => { messageDiv.innerText = ""; }, 5000);
+}
+
+function hideLoading() {
+  loadingOverlay.style.display = "none";
 }
 
 function convertFileToBase64(file) {
