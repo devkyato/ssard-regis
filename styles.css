@@ -1,29 +1,57 @@
 /* styles.css */
 
-/* Reset and Global Styles */
+/* 
+  1. RESET & BASE STYLES
+  --------------------------------------------------------------------------- 
+*/
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
+html, body {
+  width: 100%;
+  height: 100%;
   font-family: 'Roboto', sans-serif;
-  min-height: 100vh;
-  background: url('https://www.apc.edu.ph/wp-content/uploads/2019/05/Rams_Video_Still.png')
-    no-repeat center center fixed;
-  background-size: cover;
+  overflow-x: hidden; /* Prevent horizontal scroll on small screens */
+}
+
+/* 
+  2. BACKGROUND & GLOBAL LAYOUT
+  --------------------------------------------------------------------------- 
+*/
+body {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  background: url('https://www.apc.edu.ph/wp-content/uploads/2019/05/Rams_Video_Still.png')
+    no-repeat center center;
+  background-size: cover;
   position: relative;
 }
 
-/* Loading Overlay */
+/* Dark overlay on background image */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 0;
+}
+
+/* 
+  3. LOADING OVERLAY (SPINNER)
+  --------------------------------------------------------------------------- 
+*/
 #loadingOverlay {
   display: none;
   position: fixed;
   z-index: 9999;
-  top: 0; left: 0;
+  top: 0; 
+  left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.7);
@@ -53,39 +81,34 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* Overlay for dimming background */
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 0;
-}
-
-/* Main Wrapper - flex layout */
+/* 
+  4. MAIN CONTAINER (REGISTRATION)
+  --------------------------------------------------------------------------- 
+*/
 .main-wrapper {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: row;
+  margin: 100px auto 20px auto;
+  width: 90%;
+  max-width: 1100px;
   background: rgba(255, 255, 255, 0.97);
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  animation: fadeIn 1s ease-in-out;
-  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: row;
   overflow: hidden;
-  max-width: 1000px;
-  width: 95%;
-  margin: 60px auto 20px;
+  animation: fadeIn 0.8s ease-in-out;
+  transition: transform 0.3s ease;
 }
 
 .main-wrapper:hover {
   transform: translateY(-3px);
 }
 
-/* Form Container */
+/* 
+  5. LEFT SIDE (FORM)
+  --------------------------------------------------------------------------- 
+*/
 .form-container {
   flex: 1;
   padding: 40px 30px;
@@ -95,12 +118,15 @@ body {
   position: relative;
 }
 
-/* QR Container */
+/* 
+  6. RIGHT SIDE (QR)
+  --------------------------------------------------------------------------- 
+*/
 .qr-container {
-  width: 360px;
-  min-width: 300px;
-  border-left: 1px solid #ddd;
+  width: 400px;
+  min-width: 280px;
   background-color: #fafafa;
+  border-left: 1px solid #ddd;
   padding: 30px;
   display: flex;
   flex-direction: column;
@@ -108,21 +134,30 @@ body {
   align-items: center;
 }
 
-/* Titles */
-.form-container h1,
 .qr-container h2 {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
 }
 
-.hidden {
-  display: none !important;
+/* 
+  7. TITLES & HEADERS
+  --------------------------------------------------------------------------- 
+*/
+.form-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+  font-weight: 700;
 }
 
-/* Logo */
+/* 
+  8. LOGO
+  --------------------------------------------------------------------------- 
+*/
 .logo-container {
   position: absolute;
   top: -40px;
@@ -139,7 +174,10 @@ body {
   height: 60px;
 }
 
-/* Form Label Styles */
+/* 
+  9. FORM ELEMENTS
+  --------------------------------------------------------------------------- 
+*/
 form label {
   display: block;
   margin-bottom: 5px;
@@ -148,7 +186,6 @@ form label {
   font-size: 14px;
 }
 
-/* Form Input Styles */
 form input[type="text"],
 form input[type="email"],
 form input[type="file"] {
@@ -170,7 +207,10 @@ form input[type="file"]:focus {
   outline: none;
 }
 
-/* Signature Options Styles */
+/* 
+  10. SIGNATURE OPTIONS
+  --------------------------------------------------------------------------- 
+*/
 .signature-options {
   display: flex;
   justify-content: space-between;
@@ -186,7 +226,7 @@ form input[type="file"]:focus {
   margin-right: 5px;
 }
 
-/* Draw Section */
+/* Upload & Draw Section */
 #draw_section canvas {
   width: 100%;
   height: 150px;
@@ -201,7 +241,6 @@ form input[type="file"]:focus {
   box-shadow: 0 0 8px rgba(108,99,255,0.3);
 }
 
-/* Clear Button */
 #clear {
   margin-top: 10px;
   padding: 8px 12px;
@@ -219,13 +258,19 @@ form input[type="file"]:focus {
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-/* reCAPTCHA Container */
+/* 
+  11. reCAPTCHA
+  --------------------------------------------------------------------------- 
+*/
 .recaptcha-container {
   margin: 15px 0;
   text-align: center;
 }
 
-/* Submit Button */
+/* 
+  12. SUBMIT BUTTON
+  --------------------------------------------------------------------------- 
+*/
 #registerBtn {
   background-color: #6c63ff;
   color: white;
@@ -244,7 +289,10 @@ form input[type="file"]:focus {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* QR Code Display */
+/* 
+  13. QR DISPLAY
+  --------------------------------------------------------------------------- 
+*/
 .qr-display {
   margin-top: 10px;
   text-align: center;
@@ -257,7 +305,14 @@ form input[type="file"]:focus {
   background: #fff;
 }
 
-/* Message Display */
+.hidden {
+  display: none !important;
+}
+
+/* 
+  14. MESSAGES
+  --------------------------------------------------------------------------- 
+*/
 #message {
   margin-top: 20px;
   text-align: center;
@@ -266,7 +321,10 @@ form input[type="file"]:focus {
   animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Footer */
+/* 
+  15. FOOTER
+  --------------------------------------------------------------------------- 
+*/
 footer {
   position: relative;
   margin-top: auto;
@@ -276,7 +334,7 @@ footer {
 }
 
 .footer-inner {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -295,11 +353,15 @@ footer {
   text-decoration: none;
   font-weight: 500;
 }
+
 .social-links a:hover {
   text-decoration: underline;
 }
 
-/* Animations */
+/* 
+  16. ANIMATIONS
+  --------------------------------------------------------------------------- 
+*/
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -322,14 +384,27 @@ footer {
   }
 }
 
-/* Responsive Design */
+/* 
+  17. RESPONSIVE BREAKPOINTS
+  --------------------------------------------------------------------------- 
+*/
+/* 
+   For tablets & smaller laptops 
+   (e.g., below ~1000px we can adjust QR container width)
+*/
+@media (max-width: 1000px) {
+  .qr-container {
+    width: 320px;
+  }
+}
+
+/* For narrower screens, stack form and QR vertically */
 @media (max-width: 850px) {
   .main-wrapper {
     flex-direction: column;
-    width: 90%;
-    margin-top: 100px;
+    margin: 60px auto;
   }
-  
+
   .qr-container {
     border-left: none;
     border-top: 1px solid #ddd;
@@ -342,5 +417,26 @@ footer {
 
   .qr-container h2 {
     margin-bottom: 10px;
+    font-size: 18px;
+  }
+}
+
+/* For very small screens (phones) */
+@media (max-width: 480px) {
+  form input[type="text"],
+  form input[type="email"],
+  form input[type="file"] {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  #clear {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  #registerBtn {
+    font-size: 15px;
+    padding: 10px;
   }
 }
