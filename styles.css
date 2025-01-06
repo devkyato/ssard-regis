@@ -30,6 +30,7 @@ body {
 
 /* To fully hide elements that are "hidden" initially */
 .hidden-start {
+  /* This class can be used to keep them out of the flow or just hidden until JS toggles show */
   position: relative; /* keep normal flow; hidden by opacity anyway */
 }
 
