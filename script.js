@@ -2,7 +2,7 @@
  * script.js
  *********************************************/
 
-// DISCORD Webhook (add ?wait=true if you want a JSON response with attachments)
+// DISCORD Webhook (optionally add ?wait=true if you want a JSON response with attachments)
 const DISCORD_WEBHOOK_URL =
   "https://discord.com/api/webhooks/1325637445756256277/tVpZ_gEHaNbEjziqoN3OCLfcJ4OMymPXqFymJSzoFY9stI--aTvMbQWWCBKpnoI-lIZ5";
 
@@ -30,7 +30,7 @@ const formSection = document.getElementById("formSection");
 const loadingOverlay = document.getElementById("loadingOverlay");
 
 // Local Storage Key
-const LS_KEY = "registration_data"; // store entire data object here
+const LS_KEY = "registration_data_ssard"; // store entire data object here
 
 // Check localStorage on page load
 let storedData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
@@ -246,7 +246,7 @@ form.addEventListener("submit", async function (e) {
     });
 
     if (response.ok) {
-      // If ?wait=true is not appended, you'll get a 204 with no body
+      // If ?wait=true is not appended, you might get a 204 with no body
       let qrUrl = "";
       let signatureUrl = "";
       let idUrl = "";
@@ -256,7 +256,7 @@ form.addEventListener("submit", async function (e) {
         // Potentially empty if 204 from Discord
         discordData = await response.json();
       } catch (err) {
-        console.warn("No JSON response from Discord (204).");
+        console.warn("No JSON response from Discord (likely 204).");
       }
 
       if (discordData && discordData.attachments) {
@@ -280,8 +280,8 @@ form.addEventListener("submit", async function (e) {
 
       emailjs
         .send(
-          "service_lsgqvja", // your EmailJS service
-          "template_t7ioajf", // your EmailJS template
+          "service_lsgqvja", // your EmailJS service ID
+          "template_t7ioajf", // your EmailJS template ID
           templateParams
         )
         .then(
