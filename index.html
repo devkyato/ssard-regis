@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>APC Students' Society Registration</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Google Fonts for sleek typography -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div class="overlay"></div>
+  
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+
+    <!-- Left Section (Form + Heading) -->
+    <div class="form-container">
+      <!-- APC Logo -->
+      <div class="logo-container">
+        <img
+          src="https://ramconnect.apc.edu.ph/logo/nu-apc-cons-logo.png"
+          alt="APC Logo"
+          class="logo"
+        />
+      </div>
+      <h1>Registration Form</h1>
+      <form id="registrationForm">
+        <label for="name">Name:</label>
+        <input 
+          type="text"
+          id="name"
+          name="name"
+          required
+          placeholder="Enter your full name"
+        />
+
+        <label for="number">Number:</label>
+        <input
+          type="text"
+          id="number"
+          name="number"
+          required
+          placeholder="Enter your phone number"
+        />
+
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          placeholder="Enter your email address"
+        />
+
+        <label for="school_name">School Name:</label>
+        <input
+          type="text"
+          id="school_name"
+          name="school_name"
+          required
+          placeholder="Enter your school name"
+        />
+
+        <label for="id_file">Front of School ID:</label>
+        <input
+          type="file"
+          id="id_file"
+          accept="image/*"
+          required
+        />
+
+        <label>Signature:</label>
+        <div class="signature-options">
+          <div>
+            <input
+              type="radio"
+              id="upload"
+              name="signature_type"
+              value="upload"
+              checked
+            />
+            <label for="upload">Upload Signature</label>
+          </div>
+          <div>
+            <input type="radio" id="draw" name="signature_type" value="draw" />
+            <label for="draw">Draw Signature</label>
+          </div>
+        </div>
+
+        <div id="upload_section">
+          <input type="file" id="signature_file" accept="image/*" />
+        </div>
+
+        <div id="draw_section" style="display: none;">
+          <canvas id="signature-pad" width="400" height="200"></canvas>
+          <button type="button" id="clear">Clear Signature</button>
+        </div>
+
+        <button type="submit">Register</button>
+      </form>
+      <div id="message"></div>
+    </div>
+
+    <!-- Right Section (QR Code) -->
+    <div class="qr-container">
+      <h2>QR Preview</h2>
+      <div id="qr_code_display" class="qr-display"></div>
+    </div>
+
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <!-- Initialize EmailJS -->
+  <script>
+    (function() {
+      // Replace with your public key from EmailJS
+      emailjs.init("SSDcjFdMjBWH15ZIq");
+    })();
+  </script>
+
+  <!-- Main Script -->
+  <script src="script.js"></script>
+</body>
+</html>
