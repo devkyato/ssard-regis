@@ -20,6 +20,7 @@
   </div>
 
   <!-- Main Container -->
+  <!-- Keep fade-init but remove hidden-start here so we can fade it in via JS -->
   <div class="container fade-init" id="mainContainer">
     <!-- Header & Title -->
     <header class="header fade-init" id="header">
@@ -33,7 +34,8 @@
     </header>
 
     <!-- Already Registered Display -->
-    <div 
+    <!-- Keep fade-init for the transition, plus hidden-start so it stays hidden initially -->
+    <div
       id="alreadyRegisteredSection"
       class="already-registered fade-init hidden-start"
     >
@@ -49,6 +51,7 @@
     </div>
 
     <!-- Registration Form -->
+    <!-- Keep fade-init and hidden-start for the form section as well -->
     <div
       id="formSection"
       class="form-section fade-init hidden-start"
