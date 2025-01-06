@@ -2,271 +2,345 @@
 
 /* Reset and Global Styles */
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
+  background: url('https://www.apc.edu.ph/wp-content/uploads/2019/05/Rams_Video_Still.png')
+    no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Loading Overlay */
+#loadingOverlay {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 18px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#loadingOverlay.active {
+  display: flex;
+}
+
+#loadingOverlay .spinner {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 15px;
+  border: 6px solid #ccc;
+  border-top: 6px solid #6c63ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Overlay for dimming background */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 0;
+}
+
+/* Main Wrapper - flex layout */
+.main-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  animation: fadeIn 1s ease-in-out;
+  transition: transform 0.3s ease;
+  overflow: hidden;
+  max-width: 1000px;
+  width: 95%;
+  margin: 60px auto 20px;
+}
+
+.main-wrapper:hover {
+  transform: translateY(-3px);
+}
+
+/* Form Container */
+.form-container {
+  flex: 1;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+/* QR Container */
+.qr-container {
+  width: 360px;
+  min-width: 300px;
+  border-left: 1px solid #ddd;
+  background-color: #fafafa;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Titles */
+.form-container h1,
+.qr-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Logo */
+.logo-container {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 8px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+}
+
+/* Form Label Styles */
+form label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Form Input Styles */
+form input[type="text"],
+form input[type="email"],
+form input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background: #fdfdfd;
+  font-size: 14px;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="file"]:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 8px rgba(108,99,255,0.3);
+  outline: none;
+}
+
+/* Signature Options Styles */
+.signature-options {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.signature-options div {
+  display: flex;
+  align-items: center;
+}
+
+.signature-options input {
+  margin-right: 5px;
+}
+
+/* Draw Section */
+#draw_section canvas {
+  width: 100%;
+  height: 150px;
+  border: 1.5px dashed #ddd;
+  border-radius: 8px;
+  cursor: crosshair;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#draw_section canvas:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 8px rgba(108,99,255,0.3);
+}
+
+/* Clear Button */
+#clear {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #ff4b5c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  font-size: 14px;
+}
+
+#clear:hover {
+  background-color: #e04350;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* reCAPTCHA Container */
+.recaptcha-container {
+  margin: 15px 0;
+  text-align: center;
+}
+
+/* Submit Button */
+#registerBtn {
+  background-color: #6c63ff;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+  margin-top: 10px;
+}
+
+#registerBtn:hover {
+  background-color: #574b90;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* QR Code Display */
+.qr-display {
+  margin-top: 10px;
+  text-align: center;
+  width: 256px;
+  height: 256px;
+  animation: slideIn 0.5s ease-in-out;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 4px;
+  background: #fff;
+}
+
+/* Message Display */
+#message {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 16px;
+  color: #333;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Footer */
+footer {
+  position: relative;
+  margin-top: auto;
+  background: rgba(255,255,255,0.8);
+  padding: 16px;
+  text-align: center;
+}
+
+.footer-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.footer-inner p {
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.social-links {
+  margin-top: 10px;
+}
+
+.social-links a {
+  margin: 0 8px;
+  color: #6c63ff;
+  text-decoration: none;
+  font-weight: 500;
+}
+.social-links a:hover {
+  text-decoration: underline;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
-  
-  body {
-    font-family: 'Roboto', sans-serif;
-    min-height: 100vh;
-    background: url('https://www.apc.edu.ph/wp-content/uploads/2019/05/Rams_Video_Still.png')
-      no-repeat center center fixed;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  /* Overlay for dimming background */
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 0;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  /* Main Wrapper - flex layout */
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 850px) {
   .main-wrapper {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: row;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 1s ease-in-out;
-    transition: transform 0.3s ease;
-    overflow: hidden;
-    max-width: 1000px;
-    width: 95%;
-    margin: 20px auto;
-  }
-  
-  /* Hover effect for subtle lift */
-  .main-wrapper:hover {
-    transform: translateY(-5px);
-  }
-  
-  /* Left side: form & heading */
-  .form-container {
-    flex: 1;
-    padding: 40px 30px;
-    display: flex;
     flex-direction: column;
-    justify-content: center;
-    position: relative;
+    width: 90%;
+    margin-top: 100px;
   }
   
-  /* Right side: QR display */
   .qr-container {
-    width: 360px;
-    min-width: 300px;
-    border-left: 1px solid #ddd;
-    background-color: #fafafa;
-    padding: 30px;
-    display: flex;
+    border-left: none;
+    border-top: 1px solid #ddd;
+    width: 100%;
+    min-width: auto;
     flex-direction: column;
-    justify-content: center;
+    padding: 20px;
     align-items: center;
   }
-  
-  /* Section headings */
-  .form-container h1,
+
   .qr-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 22px;
-    font-weight: 700;
+    margin-bottom: 10px;
   }
-  
-  /* Logo in form container */
-  .logo-container {
-    position: absolute;
-    top: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    padding: 8px;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .logo {
-    width: 60px;
-    height: 60px;
-  }
-  
-  /* Form Label Styles */
-  form label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
-    font-weight: 500;
-    font-size: 14px;
-  }
-  
-  /* Form Input Styles */
-  form input[type="text"],
-  form input[type="email"],
-  form input[type="file"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1.5px solid #ddd;
-    border-radius: 8px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    background: #fdfdfd;
-    font-size: 14px;
-  }
-  
-  form input[type="text"]:focus,
-  form input[type="email"]:focus,
-  form input[type="file"]:focus {
-    border-color: #6c63ff;
-    box-shadow: 0 0 8px rgba(108, 99, 255, 0.3);
-    outline: none;
-  }
-  
-  /* Signature Options Styles */
-  .signature-options {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-  }
-  
-  .signature-options div {
-    display: flex;
-    align-items: center;
-  }
-  
-  .signature-options input {
-    margin-right: 5px;
-  }
-  
-  /* Draw Section Styles */
-  #draw_section canvas {
-    width: 100%;
-    height: 150px;
-    border: 1.5px dashed #ddd;
-    border-radius: 8px;
-    cursor: crosshair;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  
-  #draw_section canvas:focus {
-    border-color: #6c63ff;
-    box-shadow: 0 0 8px rgba(108, 99, 255, 0.3);
-  }
-  
-  /* Clear Button Styles */
-  #clear {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background-color: #ff4b5c;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s, box-shadow 0.3s;
-    font-size: 14px;
-  }
-  
-  #clear:hover {
-    background-color: #e04350;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  }
-  
-  /* Submit Button Styles */
-  button[type="submit"] {
-    background-color: #6c63ff;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s, box-shadow 0.3s;
-    width: 100%;
-    margin-top: 10px;
-  }
-  
-  button[type="submit"]:hover {
-    background-color: #574b90;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  }
-  
-  /* QR Code Display Styles */
-  .qr-display {
-    margin-top: 10px;
-    text-align: center;
-    width: 256px;
-    height: 256px;
-    animation: slideIn 0.5s ease-in-out;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 4px;
-    background: #fff;
-  }
-  
-  /* Message Display Styles */
-  #message {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 16px;
-    color: #333;
-    animation: fadeIn 0.5s ease-in-out;
-  }
-  
-  /* Animations */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 850px) {
-    .main-wrapper {
-      flex-direction: column;
-      width: 90%;
-    }
-    
-    .qr-container {
-      border-left: none;
-      border-top: 1px solid #ddd;
-      width: 100%;
-      min-width: auto;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-  
-    .qr-container h2 {
-      margin-right: 20px;
-    }
-  }
-  
+}
