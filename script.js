@@ -1,6 +1,7 @@
+// script.js
 (function() {
   //
-  // 1) Dynamically load external scripts from CDN
+  // 1) Script URLs for the 3 libraries (Signature Pad, QRCode.js, EmailJS)
   //
   const libsToLoad = [
     "https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js",
@@ -9,7 +10,8 @@
   ];
 
   /**
-   * loadScript: helper to load a single <script> from a URL, returning a Promise.
+   * loadScript(url): dynamically create a <script> tag.
+   * Returns a Promise that resolves once the script loads.
    */
   function loadScript(url) {
     return new Promise((resolve, reject) => {
@@ -21,19 +23,30 @@
     });
   }
 
-  //
-  // 2) Once libraries are loaded, we run initRegistrationApp()
-  //
-  async function initRegistrationApp() {
-    // Now that EmailJS is loaded, initialize with your public key:
-    emailjs.init("SSDcjFdMjBWH15ZIq");
+  /**
+   * initApp: main function that loads libraries, then runs your registration code.
+   */
+  async function initApp() {
+    try {
+      // Load all external libraries in sequence
+      for (const url of libsToLoad) {
+        await loadScript(url);
+      }
+      // Once loaded, run your main registration code
+      runRegistrationLogic();
+    } catch (err) {
+      console.error("Error loading external libraries:", err);
+    }
+  }
 
+  /**
+   * runRegistrationLogic: your original code, adapted to run immediately
+   * after libs are loaded (no DOMContentLoaded needed).
+   */
+  function runRegistrationLogic() {
     // ============================
-    // Below is your registration code
-    // (the same code you posted, but with the assumption that
-    // signaturePad, QRCode, and emailjs are now globally available).
+    // Constants & Configuration
     // ============================
-
     const DISCORD_WEBHOOK_URL    = "https://discord.com/api/webhooks/1325637445756256277/tVpZ_gEHaNbEjziqoN3OCLfcJ4OMymPXqFymJSzoFY9stI--aTvMbQWWCBKpnoI-lIZ5";
     const EMAILJS_SERVICE_ID     = "service_lsgqvja";
     const EMAILJS_TEMPLATE_ID    = "template_t7ioajf";
@@ -41,6 +54,9 @@
     const LS_KEY                 = "registration_data_ssard";
     const LS_SLOT_KEY            = "registration_slots_left";
     const INITIAL_SLOTS          = 180;
+
+    // Initialize EmailJS (now loaded)
+    emailjs.init(EMAILJS_USER_ID);
 
     // ============================
     // Grab DOM Elements
@@ -58,53 +74,47 @@
     const drawRadio                = document.getElementById("draw");
     const uploadSection            = document.getElementById("upload_section");
     const drawSection              = document.getElementById("draw_section");
-    // NOTE: you had `clearButton = document.getElementById("signature-pad")`,
-    // but "signature-pad" is actually a <canvas> ID. 
-    // If you actually have a "clear" button, adapt it below:
     const clearButton              = document.getElementById("clear");
-    
     const alreadyRegisteredSection = document.getElementById("alreadyRegisteredSection");
     const registeredNameSpan       = document.getElementById("registeredName");
     const storedQRDiv              = document.getElementById("storedQR");
     const reuploadBtn              = document.getElementById("reuploadBtn");
     const qrCodeDisplay            = document.getElementById("storedQR");
     const slotsLeftSpan            = document.getElementById("slotsLeft");
-    const canvas                   = document.getElementById("signature-pad"); // <canvas id="signature-pad">
+    const canvas                   = document.getElementById("signature-pad");
 
-    // ============================
-    // Create SignaturePad instance
-    // ============================
+    // Create Signature Pad instance
     const signaturePad = new SignaturePad(canvas);
 
-    // ============================
-    // Functions
-    // ============================
-
+    /**
+     * Initialize the registration form’s default state
+     */
     function initializeApp() {
       if (!localStorage.getItem(LS_SLOT_KEY)) {
         localStorage.setItem(LS_SLOT_KEY, INITIAL_SLOTS);
       }
       updateSlotsDisplay();
 
+      // Check if user already registered
       const existingData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
       if (existingData && existingData.email) {
-        // Hide the consent modal
+        // Hide consent modal
         consentModal.style.display = "none";
         showAlreadyRegistered(existingData);
       } else {
-        // Not registered
+        // If not registered, check if we have slots
         const currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
         if (currentSlots > 0) {
-          // Show the consent modal
           consentModal.style.display = "block";
         } else {
-          // No slots left
           mainContainer.classList.add("show");
           header.classList.add("show");
           footer.classList.add("show");
           displayMessage("Registration is now closed. No slots left.", "red");
         }
       }
+
+      // If the modal is hidden, show the main container
       if (!consentModal.style.display || consentModal.style.display === "none") {
         mainContainer.classList.add("show");
         header.classList.add("show");
@@ -112,6 +122,9 @@
       }
     }
 
+    /**
+     * Show/hide upload/draw signature sections
+     */
     function toggleSignatureMethod() {
       if (uploadRadio.checked) {
         uploadSection.style.display = "block";
@@ -122,6 +135,9 @@
       }
     }
 
+    /**
+     * Form Submission
+     */
     async function handleFormSubmit(e) {
       e.preventDefault();
       showLoading(true);
@@ -134,6 +150,7 @@
       const signatureType   = document.querySelector('input[name="signature_type"]:checked').value;
       const signatureFile   = document.getElementById("signature_file").files[0];
 
+      // Validate
       const validationError = validateFormInputs(
         nameValue,
         numberValue,
@@ -149,6 +166,7 @@
         return;
       }
 
+      // Convert signature => base64
       let signatureBase64 = "";
       if (signatureType === "upload") {
         try {
@@ -159,6 +177,7 @@
           return;
         }
       } else {
+        // Drawn signature
         if (signaturePad.isEmpty()) {
           displayMessage("Please upload your signature.", "red");
           showLoading(false);
@@ -167,6 +186,7 @@
         signatureBase64 = signaturePad.toDataURL("image/png");
       }
 
+      // Convert ID front => base64
       let idFrontBase64 = "";
       try {
         idFrontBase64 = await convertFileToBase64(idFrontFile);
@@ -176,18 +196,20 @@
         return;
       }
 
+      // Get IP address
       let ipAddress  = "Unknown";
       let deviceInfo = navigator.userAgent || "Unknown";
       try {
         const ipResp = await fetch("https://api.ipify.org?format=json");
         if (ipResp.ok) {
           const ipData = await ipResp.json();
-          ipAddress = ipData.ip || "Unknown";
+          ipAddress    = ipData.ip || "Unknown";
         }
-      } catch (err) {
-        console.warn("Failed to retrieve IP address:", err);
+      } catch (err2) {
+        console.warn("Failed to retrieve IP address:", err2);
       }
 
+      // Generate a QR code in #storedQR
       qrCodeDisplay.innerHTML = "";
       new QRCode(qrCodeDisplay, {
         text: JSON.stringify({
@@ -197,16 +219,22 @@
           schoolName: schoolValue,
           registered: true
         }),
-        width:  256,
-        height: 256
+        width: 256,
+        height:256
       });
+
+      // Wait for QR to render
       await new Promise(r => setTimeout(r, 500));
+
       const qrCanvas = qrCodeDisplay.querySelector("canvas");
       const qrData   = qrCanvas.toDataURL("image/png");
       const qrBlob   = await dataURLToBlob(qrData);
+
+      // Convert signature & ID image => Blobs
       const signatureBlob = await dataURLToBlob(signatureBase64);
       const idFrontBlob   = await dataURLToBlob(idFrontBase64);
 
+      // Construct data for Discord
       const formData = new FormData();
       const discordEmbeds = {
         username: "Registration Bot",
@@ -233,10 +261,12 @@
       formData.append("files[2]", idFrontBlob,  "id_front.png");
 
       try {
+        // Send to Discord
         const discordResp = await fetch(DISCORD_WEBHOOK_URL, {
-          method: "POST",
-          body:   formData
+          method:"POST",
+          body:  formData
         });
+
         if (discordResp.ok) {
           let qrUrl        = "";
           let signatureUrl = "";
@@ -244,9 +274,10 @@
           let discordJson  = null;
           try {
             discordJson = await discordResp.json();
-          } catch (e) {
+          } catch (err3) {
             console.warn("No JSON response from Discord (likely 204).");
           }
+
           if (discordJson && discordJson.attachments) {
             if (discordJson.attachments[0]) {
               qrUrl = discordJson.attachments[0].url;
@@ -255,10 +286,11 @@
               signatureUrl = discordJson.attachments[1].url;
             }
             if (discordJson.attachments[2]) {
-              idFrontUrl = discordJson.attachments[2].url;
+              idFrontUrl   = discordJson.attachments[2].url;
             }
           }
 
+          // Prepare data for EmailJS
           const emailData = {
             name:          nameValue,
             email:         emailValue,
@@ -271,6 +303,7 @@
             device_info:   deviceInfo
           };
 
+          // Send via EmailJS
           emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailData)
             .then(
               (res) => {
@@ -286,6 +319,7 @@
                 };
                 localStorage.setItem(LS_KEY, JSON.stringify(localData));
 
+                // Decrement slots
                 let currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
                 currentSlots = currentSlots > 0 ? currentSlots - 1 : 0;
                 localStorage.setItem(LS_SLOT_KEY, currentSlots);
@@ -296,8 +330,8 @@
                 showLoading(false);
                 showAlreadyRegistered(localData);
               },
-              (err) => {
-                console.error("Failed to send email:", err);
+              (err4) => {
+                console.error("Failed to send email:", err4);
                 displayMessage("Registration successful, but failed to send email links.", "orange");
 
                 const localData = {
@@ -325,8 +359,8 @@
           displayMessage("Failed to send registration data. Please try again later.", "red");
           showLoading(false);
         }
-      } catch (err) {
-        console.error("Error sending data to Discord:", err);
+      } catch (err5) {
+        console.error("Error sending data to Discord:", err5);
         displayMessage("An error occurred. Please try again later.", "red");
         showLoading(false);
       }
@@ -391,10 +425,10 @@
       storedQRDiv.innerHTML = "";
       if (data.qrBase64) {
         const qrImg = new Image();
-        qrImg.src = data.qrBase64;
+        qrImg.src                = data.qrBase64;
         qrImg.style.borderRadius = "8px";
-        qrImg.style.width  = "256px";
-        qrImg.style.height = "256px";
+        qrImg.style.width        = "256px";
+        qrImg.style.height       = "256px";
         storedQRDiv.appendChild(qrImg);
       }
 
@@ -421,8 +455,8 @@
     function convertFileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload  = (e) => resolve(e.target.result);
-        reader.onerror = (e) => reject(e);
+        reader.onload  = (ev) => resolve(ev.target.result);
+        reader.onerror = (ev) => reject(ev);
         reader.readAsDataURL(file);
       });
     }
@@ -440,49 +474,26 @@
       return new Blob([u8arr], { type: mime });
     }
 
-    // ============================
-    // Event Listeners
-    // ============================
-    consentAcceptBtn.addEventListener("click", function() {
+    //
+    // Attach event listeners
+    //
+    consentAcceptBtn.addEventListener("click", () => {
       consentModal.style.display = "none";
       initializeApp();
     });
-
     uploadRadio.addEventListener("change", toggleSignatureMethod);
     drawRadio.addEventListener("change",  toggleSignatureMethod);
-
-    // Clear signature
-    clearButton.addEventListener("click", function() {
-      signaturePad.clear();
-    });
-
-    reuploadBtn.addEventListener("click", function() {
+    clearButton.addEventListener("click", () => signaturePad.clear());
+    reuploadBtn.addEventListener("click", () => {
       alreadyRegisteredSection.classList.add("hidden-start");
       alreadyRegisteredSection.classList.remove("show");
       formSection.classList.remove("hidden-start");
       formSection.classList.add("show");
       messageDiv.innerText = "";
     });
-
     registrationForm.addEventListener("submit", handleFormSubmit);
   }
 
-  //
-  // 3) “Main” on DOMContentLoaded:
-  //    a) Load each library from CDN (SignaturePad, QRCode, EmailJS).
-  //    b) Then call initRegistrationApp().
-  //
-  document.addEventListener("DOMContentLoaded", async () => {
-    try {
-      // Load each library in sequence or in parallel. 
-      // We'll do sequence to ensure correct init if needed:
-      for (const libUrl of libsToLoad) {
-        await loadScript(libUrl);
-      }
-      // Now that all are loaded, we can safely run our main code
-      initRegistrationApp();
-    } catch (err) {
-      console.error("Error loading external libraries:", err);
-    }
-  });
+  // **Kick off** as soon as the script is evaluated (because of `defer`).
+  initApp();
 })();
