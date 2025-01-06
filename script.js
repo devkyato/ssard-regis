@@ -51,8 +51,8 @@
     const EMAILJS_SERVICE_ID     = "service_lsgqvja";
     const EMAILJS_TEMPLATE_ID    = "template_t7ioajf";
     const EMAILJS_USER_ID        = "SSDcjFdMjBWH15ZIq"; 
-    const LS_KEY                 = "registration_data_ssard";
-    const LS_SLOT_KEY            = "registration_slots_left";
+    const LS_KEY                 = "regg";
+    const LS_SLOT_KEY            = "regg";
     const INITIAL_SLOTS          = 180;
 
     // Initialize EmailJS (now loaded)
@@ -103,15 +103,10 @@
         showAlreadyRegistered(existingData);
       } else {
         // If not registered, check if we have slots
-        const currentSlots = parseInt(localStorage.getItem(LS_SLOT_KEY), 10);
-        if (currentSlots > 0) {
-          consentModal.style.display = "block";
-        } else {
           mainContainer.classList.add("show");
           header.classList.add("show");
           footer.classList.add("show");
           displayMessage("Registration is now closed. No slots left.", "red");
-        }
       }
 
       // If the modal is hidden, show the main container
