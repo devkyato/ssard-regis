@@ -4,19 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>APC Students' Society Registration</title>
-  <link rel="stylesheet" href="styles.css" />
-  <!-- Google Fonts for sleek typography -->
+
+  <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
     rel="stylesheet"
   />
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- reCAPTCHA -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Please wait while we process your registration...</p>
+  </div>
+
   <div class="overlay"></div>
-  
+
   <!-- Main Wrapper -->
   <div class="main-wrapper">
-
     <!-- Left Section (Form + Heading) -->
     <div class="form-container">
       <!-- APC Logo -->
@@ -27,9 +37,19 @@
           class="logo"
         />
       </div>
-      <h1>Registration Form</h1>
+      <h1 id="formTitle">APC Registration Form</h1>
+
+      <!-- Already Registered Container (QR Display + Re-Upload) -->
+      <div id="alreadyRegisteredContainer" class="hidden">
+        <p>You are already registered.</p>
+        <h2>Your QR Code</h2>
+        <div id="storedQrDisplay"></div>
+        <button id="reuploadBtn" type="button">Re-upload Registration</button>
+      </div>
+
+      <!-- Registration Form -->
       <form id="registrationForm">
-        <label for="name">Name:</label>
+        <label for="name">Full Name:</label>
         <input 
           type="text"
           id="name"
@@ -38,7 +58,7 @@
           placeholder="Enter your full name"
         />
 
-        <label for="number">Number:</label>
+        <label for="number">Phone Number:</label>
         <input
           type="text"
           id="number"
@@ -91,17 +111,28 @@
           </div>
         </div>
 
+        <!-- Upload Section -->
         <div id="upload_section">
           <input type="file" id="signature_file" accept="image/*" />
         </div>
 
+        <!-- Draw Section -->
         <div id="draw_section" style="display: none;">
           <canvas id="signature-pad" width="400" height="200"></canvas>
           <button type="button" id="clear">Clear Signature</button>
         </div>
 
-        <button type="submit">Register</button>
+        <!-- reCAPTCHA -->
+        <div class="recaptcha-container">
+          <div
+            class="g-recaptcha"
+            data-sitekey="YOUR_RECAPTCHA_SITE_KEY"
+          ></div>
+        </div>
+
+        <button type="submit" id="registerBtn">Register</button>
       </form>
+
       <div id="message"></div>
     </div>
 
@@ -110,8 +141,20 @@
       <h2>QR Preview</h2>
       <div id="qr_code_display" class="qr-display"></div>
     </div>
-
   </div>
+
+  <!-- Footer / Social Links -->
+  <footer>
+    <div class="footer-inner">
+      <p>Asia Pacific College</p>
+      <p>3 Humabon, Makati, 1232 Kalakhang Maynila</p>
+      <div class="social-links">
+        <a href="https://twitter.com/asiapacificcoll" target="_blank">Twitter</a>
+        <a href="https://www.facebook.com/AsiaPacificCollege" target="_blank">Facebook</a>
+        <a href="https://www.instagram.com/asiapacificcollege/" target="_blank">Instagram</a>
+      </div>
+    </div>
+  </footer>
 
   <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
