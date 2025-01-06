@@ -1,20 +1,48 @@
-// script.js
+/*********************************************
+ * script.js
+ *********************************************/
 
-// 1) Discord Webhook URL
+// DISCORD Webhook
 const DISCORD_WEBHOOK_URL =
   "https://discord.com/api/webhooks/1325637445756256277/tVpZ_gEHaNbEjziqoN3OCLfcJ4OMymPXqFymJSzoFY9stI--aTvMbQWWCBKpnoI-lIZ5";
 
-// 2) Initialize Signature Pad
+// Signature Pad
 const canvas = document.getElementById("signature-pad");
 const signaturePad = new SignaturePad(canvas);
 
-// Handle signature type toggle
+// Elements
 const uploadRadio = document.getElementById("upload");
 const drawRadio = document.getElementById("draw");
 const uploadSection = document.getElementById("upload_section");
 const drawSection = document.getElementById("draw_section");
 const clearButton = document.getElementById("clear");
 
+const form = document.getElementById("registrationForm");
+const messageDiv = document.getElementById("message");
+const qrCodeDisplay = document.getElementById("qr_code_display");
+
+const alreadyRegisteredSection = document.getElementById("alreadyRegisteredSection");
+const registeredNameSpan = document.getElementById("registeredName");
+const storedQRDiv = document.getElementById("storedQR");
+const reuploadBtn = document.getElementById("reuploadBtn");
+
+const formSection = document.getElementById("formSection");
+const loadingOverlay = document.getElementById("loadingOverlay");
+
+// Local Storage Key
+const LS_KEY = "registration_data"; // store entire data object here
+
+// On page load, check if user data is in localStorage
+let storedData = JSON.parse(localStorage.getItem(LS_KEY)) || null;
+if (storedData && storedData.email) {
+  // Show "already registered" section
+  showAlreadyRegistered(storedData);
+} else {
+  // Show the form
+  formSection.classList.remove("hidden");
+}
+
+// Toggle signature method
 uploadRadio.addEventListener("change", toggleSignatureMethod);
 drawRadio.addEventListener("change", toggleSignatureMethod);
 
@@ -28,182 +56,141 @@ function toggleSignatureMethod() {
   }
 }
 
-// Handle Clear Signature
+// Clear Signature
 clearButton.addEventListener("click", () => {
   signaturePad.clear();
 });
 
-// 3) Additional DOM elements
-const form = document.getElementById("registrationForm");
-const messageDiv = document.getElementById("message");
-const qrCodeDisplay = document.getElementById("qr_code_display");
-const mainContainer = document.getElementById("mainContainer");
-const alreadyRegisteredBlock = document.getElementById("alreadyRegisteredBlock");
-const storedQRBox = document.getElementById("storedQRBox");
-const reuploadBtn = document.getElementById("reuploadBtn");
-const loadingOverlay = document.getElementById("loadingOverlay");
-
-// We'll store data in localStorage with the key "apc_registrations"
-let registrations = JSON.parse(localStorage.getItem("apc_registrations")) || {};
-
-// On page load, check if user has a "currentEmail" in localStorage
-// and show them a previously stored QR if it exists
-let currentEmail = localStorage.getItem("currentEmail");
-if (currentEmail && registrations[currentEmail]) {
-  // Show the "already registered" block
-  showAlreadyRegistered(registrations[currentEmail].qrBase64);
-} else {
-  alreadyRegisteredBlock.style.display = "none";
-}
-
-// Reupload logic
+// Re-upload button
 reuploadBtn.addEventListener("click", () => {
-  // Hide the block, show the form
-  alreadyRegisteredBlock.style.display = "none";
-  form.style.display = "block";
+  // Just show the form again
+  messageDiv.innerText = "";
+  alreadyRegisteredSection.classList.add("hidden");
+  formSection.classList.remove("hidden");
 });
 
-// Device Info & IP
-let userIP = "";
-let deviceInfo = "";
-
-// Get IP (using a free IPify API)
-fetch("https://api.ipify.org?format=json")
-  .then((response) => response.json())
-  .then((data) => {
-    userIP = data.ip || "Unknown IP";
-  })
-  .catch(() => {
-    userIP = "Unknown IP";
-  });
-
-// Gather some basic device info
-deviceInfo = navigator.userAgent || "Unknown Device Info";
-
-// Form Submission
+// Form Submit
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
-  
   // Show loading overlay
-  loadingOverlay.style.display = "flex";
+  showLoading(true);
 
-  // Get form values
+  // Basic fields
   const name = document.getElementById("name").value.trim();
   const number = document.getElementById("number").value.trim();
-  const email = document.getElementById("email").value.trim().toLowerCase();
+  const email = document.getElementById("email").value.trim();
   const schoolName = document.getElementById("school_name").value.trim();
   const idFile = document.getElementById("id_file").files[0];
 
   const signatureType = document.querySelector('input[name="signature_type"]:checked').value;
   const signatureFile = document.getElementById("signature_file").files[0];
 
-  // Basic Validation
-  const nameRegex = /^[A-Za-z\s]+$/;
-  if (!nameRegex.test(name)) {
-    hideLoading();
+  // Validate
+  if (!/^[A-Za-z\s]+$/.test(name)) {
     displayMessage("Invalid name. Only letters and spaces are allowed.", "red");
+    showLoading(false);
     return;
   }
 
-  const numberRegex = /^\d{10}$/;
-  if (!numberRegex.test(number)) {
-    hideLoading();
+  if (!/^\d{10}$/.test(number)) {
     displayMessage("Invalid phone number. It must be a 10-digit number.", "red");
+    showLoading(false);
     return;
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    hideLoading();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     displayMessage("Invalid email address.", "red");
+    showLoading(false);
     return;
   }
 
   if (!schoolName) {
-    hideLoading();
     displayMessage("Please enter your school name.", "red");
+    showLoading(false);
     return;
   }
 
   if (!idFile) {
-    hideLoading();
     displayMessage("Please attach the front of your school ID.", "red");
+    showLoading(false);
     return;
   }
 
-  // If they're re-registering with the same email, ask if they'd like to proceed
-  if (registrations[email]) {
-    const proceed = confirm(
-      `This email (${email}) is already registered. Do you want to overwrite the previous registration?`
-    );
-    if (!proceed) {
-      hideLoading();
-      displayMessage("Registration cancelled.", "orange");
-      return;
-    }
-  }
-
-  // Handle Signature
   let signatureBase64 = "";
   if (signatureType === "upload") {
     if (!signatureFile) {
-      hideLoading();
       displayMessage("Please upload your signature.", "red");
+      showLoading(false);
       return;
     }
-    // Convert uploaded image to Base64
-    signatureBase64 = await convertFileToBase64(signatureFile);
-  } else if (signatureType === "draw") {
+    try {
+      signatureBase64 = await convertFileToBase64(signatureFile);
+    } catch (err) {
+      displayMessage("Failed to read signature file.", "red");
+      showLoading(false);
+      return;
+    }
+  } else {
+    // draw
     if (signaturePad.isEmpty()) {
-      hideLoading();
-      displayMessage("Please provide a signature.", "red");
+      displayMessage("Please draw your signature.", "red");
+      showLoading(false);
       return;
     }
     signatureBase64 = signaturePad.toDataURL("image/png");
-  } else {
-    hideLoading();
-    displayMessage("Invalid signature input.", "red");
-    return;
   }
 
-  // Convert ID front to Base64
+  // Convert ID to base64
   let idBase64 = "";
   try {
     idBase64 = await convertFileToBase64(idFile);
   } catch (err) {
-    hideLoading();
     displayMessage("Failed to load ID image. Please try again.", "red");
+    showLoading(false);
     return;
   }
 
-  // Generate QR Code
+  // Prepare to fetch user IP + gather device info
+  let userIP = "Unknown";
+  let deviceInfo = navigator.userAgent || "Unknown";
+
+  try {
+    const ipResp = await fetch("https://api.ipify.org?format=json");
+    if (ipResp.ok) {
+      const ipData = await ipResp.json();
+      userIP = ipData.ip || "Unknown";
+    }
+  } catch (err) {
+    console.warn("Failed to retrieve IP address:", err);
+  }
+
+  // Create QR
+  qrCodeDisplay.innerHTML = "";
   const qrDataObject = {
     name,
     number,
     email,
-    school: schoolName,
+    schoolName,
     registered: true,
   };
-  const qrData = JSON.stringify(qrDataObject);
+
   const qr = new QRCode(qrCodeDisplay, {
-    text: qrData,
+    text: JSON.stringify(qrDataObject),
     width: 256,
     height: 256,
   });
 
-  // Wait briefly for QR code to generate
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  await new Promise((r) => setTimeout(r, 500));
 
-  // Convert the QR code canvas to Base64
   const qrCanvas = qrCodeDisplay.querySelector("canvas");
   const qrBase64 = qrCanvas.toDataURL("image/png");
 
-  // Prepare Blobs for Discord
-  const qrImageBlob = await dataURLToBlob(qrBase64);
+  // Convert to Blob
+  const qrBlob = await dataURLToBlob(qrBase64);
   const signatureBlob = await dataURLToBlob(signatureBase64);
-  const idFrontBlob = await dataURLToBlob(idBase64);
+  const idBlob = await dataURLToBlob(idBase64);
 
-  // Prepare Discord Payload
+  // Prepare Discord formData
   const formData = new FormData();
   const payload = {
     username: "Registration Bot",
@@ -226,9 +213,9 @@ form.addEventListener("submit", async function (e) {
   };
 
   formData.append("payload_json", JSON.stringify(payload));
-  formData.append("files[0]", qrImageBlob, "qr_code.png");
+  formData.append("files[0]", qrBlob, "qr_code.png");
   formData.append("files[1]", signatureBlob, "signature.png");
-  formData.append("files[2]", idFrontBlob, "id_front.png"); // The school ID front
+  formData.append("files[2]", idBlob, "id_front.png");
 
   // Send to Discord Webhook
   try {
@@ -238,10 +225,9 @@ form.addEventListener("submit", async function (e) {
     });
 
     if (response.ok) {
-      // Attempt to get the attachments array from the created message
+      // Discord response
       const discordData = await response.json();
       const attachments = discordData.attachments || [];
-
       let qrUrl = "";
       let signatureUrl = "";
       let idUrl = "";
@@ -250,7 +236,7 @@ form.addEventListener("submit", async function (e) {
       if (attachments[1]) signatureUrl = attachments[1].url;
       if (attachments[2]) idUrl = attachments[2].url;
 
-      // Send confirmation email using EmailJS with the public URLs
+      // EmailJS
       const templateParams = {
         name,
         email,
@@ -259,116 +245,104 @@ form.addEventListener("submit", async function (e) {
         qr_image_url: qrUrl,
         signature_url: signatureUrl,
         id_front_url: idUrl,
-        user_ip: userIP,
-        device_info: deviceInfo
+        ip_address: userIP,
+        device_info: deviceInfo,
       };
 
       emailjs
         .send(
-          "service_lsgqvja", // <-- Your EmailJS service ID
-          "template_t7ioajf", // <-- Your EmailJS template ID
+          "service_lsgqvja",  // your EmailJS service
+          "template_t7ioajf", // your EmailJS template
           templateParams
         )
         .then(
           function (res) {
-            hideLoading();
             console.log("Email sent successfully!", res.status, res.text);
-            displayMessage(
-              "Registration successful! Check your email for links (QR, signature, ID).",
-              "lime"
-            );
+            displayMessage("Registration successful! Please check your email.", "green");
 
-            // Store in localStorage
-            registrations[email] = {
+            // Save in localStorage
+            const storeObj = {
               name,
-              number,
               email,
-              school: schoolName,
+              number,
+              schoolName,
               qrBase64,
             };
-            localStorage.setItem("apc_registrations", JSON.stringify(registrations));
-            localStorage.setItem("currentEmail", email);
+            localStorage.setItem(LS_KEY, JSON.stringify(storeObj));
 
-            // Reset form
             form.reset();
             signaturePad.clear();
+            showLoading(false);
+
+            // Show user is already registered
+            showAlreadyRegistered(storeObj);
           },
           function (error) {
-            hideLoading();
             console.log("Failed to send email:", error);
             displayMessage(
               "Registration successful, but failed to send email links.",
               "orange"
             );
 
-            // Store anyway since Discord was successful
-            registrations[email] = {
+            // Still save
+            const storeObj = {
               name,
-              number,
               email,
-              school: schoolName,
+              number,
+              schoolName,
               qrBase64,
             };
-            localStorage.setItem("apc_registrations", JSON.stringify(registrations));
-            localStorage.setItem("currentEmail", email);
+            localStorage.setItem(LS_KEY, JSON.stringify(storeObj));
 
             form.reset();
             signaturePad.clear();
+            showLoading(false);
+
+            // Show user is already registered
+            showAlreadyRegistered(storeObj);
           }
         );
     } else {
-      hideLoading();
       console.error("Failed to send data to Discord:", response.statusText);
-      displayMessage("Failed to send registration data. Please try again later.", "red");
+      displayMessage(
+        "Failed to send registration data. Please try again later.",
+        "red"
+      );
+      showLoading(false);
     }
   } catch (error) {
-    hideLoading();
     console.error("Error sending data to Discord:", error);
     displayMessage("An error occurred. Please try again later.", "red");
+    showLoading(false);
   }
 });
 
-// Helper Functions
-function showAlreadyRegistered(qrBase64) {
-  // Show the block
-  alreadyRegisteredBlock.style.display = "block";
-  form.style.display = "none";
-
-  // Display the stored QR code
-  storedQRBox.innerHTML = "";
-  if (qrBase64) {
-    const img = document.createElement("img");
-    img.src = qrBase64;
-    img.style.width = "100%";
-    img.style.height = "auto";
-    storedQRBox.appendChild(img);
-  }
-}
-
+// Helpers
 function displayMessage(msg, color) {
   messageDiv.innerText = msg;
   messageDiv.style.color = color;
-  // Optionally clear the message after some time:
-  // setTimeout(() => { messageDiv.innerText = ""; }, 5000);
 }
 
-function hideLoading() {
-  loadingOverlay.style.display = "none";
+// Show loading overlay
+function showLoading(isLoading) {
+  if (isLoading) {
+    loadingOverlay.classList.add("active");
+  } else {
+    loadingOverlay.classList.remove("active");
+  }
 }
 
+// Convert file to base64
 function convertFileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = function (event) {
-      resolve(event.target.result);
-    };
-    reader.onerror = function (error) {
-      reject(error);
-    };
+    reader.onload = (evt) => resolve(evt.target.result);
+    reader.onerror = (err) => reject(err);
     reader.readAsDataURL(file);
   });
 }
 
+// DataURL -> Blob
 function dataURLToBlob(dataurl) {
   const arr = dataurl.split(",");
   const mime = arr[0].match(/:(.*?);/)[1];
@@ -379,4 +353,24 @@ function dataURLToBlob(dataurl) {
     u8arr[n] = bstr.charCodeAt(n);
   }
   return new Blob([u8arr], { type: mime });
+}
+
+// Show Already Registered UI
+function showAlreadyRegistered(dataObj) {
+  // Hide form
+  formSection.classList.add("hidden");
+  // Show already-registered section
+  alreadyRegisteredSection.classList.remove("hidden");
+
+  registeredNameSpan.textContent = dataObj.name || "User";
+  storedQRDiv.innerHTML = "";
+  if (dataObj.qrBase64) {
+    // show the QR in storedQRDiv
+    const img = new Image();
+    img.src = dataObj.qrBase64;
+    img.style.width = "256px";
+    img.style.height = "256px";
+    img.style.borderRadius = "8px";
+    storedQRDiv.appendChild(img);
+  }
 }
