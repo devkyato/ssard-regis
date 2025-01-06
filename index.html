@@ -4,52 +4,44 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>APC Students' Society Registration</title>
-
+  <link rel="stylesheet" href="styles.css" />
   <!-- Google Fonts -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap"
     rel="stylesheet"
   />
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="styles.css" />
-
-  <!-- reCAPTCHA -->
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-  <!-- Loading Overlay -->
-  <div id="loadingOverlay">
-    <div class="spinner"></div>
-    <p>Please wait while we process your registration...</p>
+
+  <!-- Loading Overlay (hidden by default) -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-text">Submitting Registration...</div>
   </div>
 
-  <div class="overlay"></div>
+  <!-- Main Header -->
+  <header class="header-bar">
+    <div class="header-content">
+      <h1 class="header-title">APC Students' Society</h1>
+      <h2 class="header-subtitle">Registration</h2>
+    </div>
+  </header>
 
-  <!-- Main Wrapper -->
-  <div class="main-wrapper">
-    <!-- Left Section (Form + Heading) -->
-    <div class="form-container">
-      <!-- APC Logo -->
-      <div class="logo-container">
-        <img
-          src="https://ramconnect.apc.edu.ph/logo/nu-apc-cons-logo.png"
-          alt="APC Logo"
-          class="logo"
-        />
-      </div>
-      <h1 id="formTitle">APC Registration Form</h1>
+  <!-- Main Container -->
+  <div class="main-container" id="mainContainer">
+    <!-- Left Section: Form -->
+    <section class="form-section" id="formSection">
+      <h3 class="section-title">Register Now</h3>
 
-      <!-- Already Registered Container (QR Display + Re-Upload) -->
-      <div id="alreadyRegisteredContainer" class="hidden">
-        <p>You are already registered.</p>
-        <h2>Your QR Code</h2>
-        <div id="storedQrDisplay"></div>
-        <button id="reuploadBtn" type="button">Re-upload Registration</button>
+      <!-- If user is already registered, show the stored QR code and "Re-upload" button -->
+      <div id="alreadyRegisteredBlock" class="already-registered-block" style="display: none;">
+        <p>You have already registered with this email before.</p>
+        <div class="qr-box" id="storedQRBox"></div>
+        <button type="button" class="reupload-btn" id="reuploadBtn">Re-upload Registration</button>
       </div>
 
-      <!-- Registration Form -->
-      <form id="registrationForm">
-        <label for="name">Full Name:</label>
+      <!-- The Form -->
+      <form id="registrationForm" class="reg-form">
+        <label for="name">Full Name</label>
         <input 
           type="text"
           id="name"
@@ -58,7 +50,7 @@
           placeholder="Enter your full name"
         />
 
-        <label for="number">Phone Number:</label>
+        <label for="number">Contact Number</label>
         <input
           type="text"
           id="number"
@@ -67,7 +59,7 @@
           placeholder="Enter your phone number"
         />
 
-        <label for="email">Email:</label>
+        <label for="email">Email Address</label>
         <input
           type="email"
           id="email"
@@ -76,7 +68,7 @@
           placeholder="Enter your email address"
         />
 
-        <label for="school_name">School Name:</label>
+        <label for="school_name">School Name</label>
         <input
           type="text"
           id="school_name"
@@ -85,7 +77,7 @@
           placeholder="Enter your school name"
         />
 
-        <label for="id_file">Front of School ID:</label>
+        <label for="id_file">Front of School ID</label>
         <input
           type="file"
           id="id_file"
@@ -93,66 +85,66 @@
           required
         />
 
-        <label>Signature:</label>
-        <div class="signature-options">
-          <div>
-            <input
-              type="radio"
-              id="upload"
-              name="signature_type"
-              value="upload"
-              checked
-            />
-            <label for="upload">Upload Signature</label>
-          </div>
-          <div>
-            <input type="radio" id="draw" name="signature_type" value="draw" />
-            <label for="draw">Draw Signature</label>
+        <div class="signature-group">
+          <p>Signature</p>
+          <div class="signature-options">
+            <div>
+              <input
+                type="radio"
+                id="upload"
+                name="signature_type"
+                value="upload"
+                checked
+              />
+              <label for="upload">Upload Signature</label>
+            </div>
+            <div>
+              <input type="radio" id="draw" name="signature_type" value="draw" />
+              <label for="draw">Draw Signature</label>
+            </div>
           </div>
         </div>
 
-        <!-- Upload Section -->
+        <!-- Signature Upload Section -->
         <div id="upload_section">
+          <label for="signature_file" class="small-label">Upload Signature File</label>
           <input type="file" id="signature_file" accept="image/*" />
         </div>
 
-        <!-- Draw Section -->
+        <!-- Signature Draw Section -->
         <div id="draw_section" style="display: none;">
-          <canvas id="signature-pad" width="400" height="200"></canvas>
-          <button type="button" id="clear">Clear Signature</button>
+          <canvas id="signature-pad" width="400" height="120"></canvas>
+          <button type="button" id="clear" class="clear-btn">Clear Signature</button>
         </div>
 
-        <!-- reCAPTCHA -->
-        <div class="recaptcha-container">
-          <div
-            class="g-recaptcha"
-            data-sitekey="6LeqSa8qAAAAAMQnQaBijgK8-NiSAphguWhVLkeJ"
-          ></div>
-        </div>
-
-        <button type="submit" id="registerBtn">Register</button>
+        <button type="submit" class="submit-btn">Submit Registration</button>
       </form>
 
-      <div id="message"></div>
-    </div>
+      <!-- Message Div -->
+      <div id="message" class="form-message"></div>
+    </section>
 
-    <!-- Right Section (QR Code) -->
-    <div class="qr-container">
-      <h2>QR Preview</h2>
+    <!-- Right Section: QR Preview -->
+    <section class="qr-section">
+      <h3 class="section-title">QR Preview</h3>
       <div id="qr_code_display" class="qr-display"></div>
-    </div>
+    </section>
   </div>
 
-  <!-- Footer / Social Links -->
-  <footer>
-    <div class="footer-inner">
-      <p>Asia Pacific College</p>
-      <p>3 Humabon, Makati, 1232 Kalakhang Maynila</p>
-      <div class="social-links">
-        <a href="https://twitter.com/asiapacificcoll" target="_blank">Twitter</a>
-        <a href="https://www.facebook.com/AsiaPacificCollege" target="_blank">Facebook</a>
-        <a href="https://www.instagram.com/asiapacificcollege/" target="_blank">Instagram</a>
-      </div>
+  <!-- Footer Section -->
+  <footer class="footer-bar">
+    <div class="footer-content">
+      <p class="footer-text">
+        <strong>Asia Pacific College</strong><br />
+        3 Humabon, Makati, 1232 Kalakhang Maynila
+      </p>
+      <p class="footer-text">
+        Connect with us:
+        <a href="https://twitter.com/apc_official" target="_blank">Twitter</a> |
+        <a href="https://facebook.com/apcofficial" target="_blank">Facebook</a> |
+        <a href="https://instagram.com/apc_official" target="_blank">Instagram</a>
+      </p>
+      <p class="footer-text">&copy; 2023 Asia Pacific College. All Rights Reserved.</p>
     </div>
   </footer>
 
